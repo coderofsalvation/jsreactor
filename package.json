@@ -1,0 +1,21 @@
+{
+  "name": "jsreactor",
+  "version": "1.0.0",
+  "description": "backend-agnostic business rule engine (IFTTT) for javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/unit/test.js | node_modules/.bin/tap-min && grep Alpine /etc/issue || npm run test-e2e",
+    "test-e2e": "RUNTESTS=1 node app.js | node_modules/.bin/tap-min"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tap-min": "^2.0.0",
+    "zora": "^3.1.1"
+  },
+  "dependencies": {
+    "debug": "^4.1.1",
+    "json-rules-engine": "^4.1.0",
+    "p-memoize": "^3.1.0"
+  }
+}
