@@ -1,5 +1,5 @@
 {
-  "name": "jsreactor",
+  "name": "@coderofsalvation/jsreactor",
   "version": "1.0.0",
   "description": "backend-agnostic business rule engine (IFTTT) for javascript",
   "main": "index.js",
