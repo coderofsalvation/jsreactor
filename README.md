@@ -9,7 +9,7 @@ Current backend-adapters:
 
 ## Installation
 
-    $ npm install jsreactor --save
+    $ npm install @coderofsalvation/jsreactor --save
 
 ```
 var BRE = require('jsreactor')
