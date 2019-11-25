@@ -4,18 +4,38 @@ module.exports = function(opts){
     this.title       = "Javascript"
     this.description = "javascript snippet"  
     this.init = async () => {
-        this.trigger = {
-            schema: []
-        }
+        
+        var runJS = async (input,cfg,results) => {
+            new Function( 'input', 'cfg', 'results', 'log','error',cfg.js )(input,cfg,results,bre.log,console.error)
+        }               
+        
+        this.trigger = { schema: []}
         
         this.action  = {
             schema: [
                 {
                     type:"object",
-                    title:"code",
+                    title:" ",
                     properties:{
-                        type:{type:"string",default:"javascript",pattern:"^javascript$",options:{hidden:true}},
-                        js:{ type:"string", format:"textarea", default:"app.get('/foo', (req,res,next) => res.send('hello') )"}
+                        type: bre.addType('javascript', runJS ),
+                        js:{ 
+                            type:"string", 
+                            title:"code",
+                            description:"(input,cfg,results,log,error) => { ... }", 
+                            default:"//input.users = await Parse.Query('User').limit(2).find()\n//error('boo')\n//log('hello world')\nreturn input\n",
+                            format: "javascript",
+                            "options": {
+                                "ace": {
+                                    /*"theme": "ace/theme/vibrant_ink",*/
+                                    "tabSize": 2,
+                                    "useSoftTabs": true,
+                                    "wrap": true,
+                                    maxLines:10,
+                                    minLines:10,
+                                    fontSize:'14px'
+                                }
+                            }
+                        }
                     }
                 }            
             ]            
@@ -26,3 +46,4 @@ module.exports = function(opts){
   
     return this
 }
+

@@ -38,11 +38,8 @@ Search for `jsreactor-channel` on npm, and then install it (e.g. `npm install js
 // include
 require('glob').sync("node_modules/jsreactor-channel-**/index.js")
 .map( (c) => {
-    console.log("including "+c)
-    try{
-        var channel = require( c.replace(/node_modules/,'./../node_modules') )  
-        new channel({bre})
-    }catch(e){console.error(e.stack)}   
+    var channel = require( c )
+    new channel({bre})
 })
 ```
 

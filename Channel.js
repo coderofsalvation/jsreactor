@@ -41,25 +41,29 @@ function Channel(bre){
         this.channels[c.title] = async () => {
             console.log(`initing ${c.title}`)
             await c.init()
-            if( !get(c,'trigger.schema') ) throw `${c}: trigger.schema-object not found in module.exports`
-            if( !get(c,'action.schema' ) ) throw `${c}: action.schema-object not found in module.exports`
+            if( !get(c,'trigger.schema') ) throw `${c.title}: trigger.schema-object not found in module.exports`
+            if( !get(c,'action.schema' ) ) throw `${c.title}: action.schema-object not found in module.exports`
             
-            var cSchema = (type,types) => ({
-                "type":"object",
-                title: c.title,
-                id:c.title,
-                description:c.description,
-                properties:{
-                    channel: {"type":"string",options:{hidden:true},"pattern":`^${c.title}$`,default:c.title},
-                    config:{
-                        title:type,
-                        oneOf: types
+            var cSchema = (type,types) => {
+                var s = {
+                    "type":"object",
+                    title: c.title,
+                    id:c.title,
+                    description:c.description,
+                    properties:{
+                        channel: {"type":"string",options:{hidden:true},"pattern":`^${c.title}$`,default:c.title},
+                        config:{
+                            title:type,
+                        }
                     }
                 }
-            })
+                s.properties.config = types.length > 1 ? {title:type, oneOf: types }
+                                                       : types[0]
+                return s
+            }
             if( c.definitions ) this.schema.definitions = Object.assign(this.schema.definitions,c.definitions)
-            this.schema.properties.trigger.items.oneOf.push(cSchema("trigger",c.trigger.schema))
-            this.schema.properties.action.items.oneOf.push(cSchema("action",c.action.schema))  
+            if( c.trigger.schema.length )     this.schema.properties.trigger.items.oneOf.push(cSchema("trigger",c.trigger.schema))
+            if( c.action.schema.length  )     this.schema.properties.action.items.oneOf.push(cSchema("action",c.action.schema))  
         }
         this.channels[c.title].instance = c
         this.log(`addChannel(${c.title})`)

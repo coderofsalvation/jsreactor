@@ -76,19 +76,19 @@ function BRE(adapter){
         .catch( reject )
     })
 
-    this.run = (facts) => new Promise( async (resolve,reject) => {
+    this.run = async (facts) => new Promise( async (resolve,reject) => {
         var t     = new Date().getTime()
         facts.runid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 7) 
         await this.init()
         debug("run("+JSON.stringify(facts)+")")
         var res = {runid: facts.runid, triggers: (new Date().getTime()-t)+"ms",actions:"0ms"}
-        
         this.engine.on('success', (event,almanac,result) => {
             this.log(`TRIGGER '${result.name}' (${facts.runid})`)
         })
 
         this.engine.run(facts)
         .then( async (results) => {
+            res.actions = results.events.length
             if( results.events.length == 0 ) return resolve(res)
             results.events.map( async (e) => await Channel.runActions(e,facts,results) )
             res.actions = (new Date().getTime()-t)+"ms"
