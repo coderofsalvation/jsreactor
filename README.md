@@ -5,7 +5,7 @@ This is basically a wrapper for [json-rules-engine](https://npmjs.com/package/js
 
 Current backend-adapters:
 
-* [parse-server-jsreactor]() for [Parse-server]()
+* [parse-server-jsreactor](https://npmjs.org/package/parse-server-jsreactor) for [Parse-server](https://npmjs.com/package/parse-server)
 
 ## Installation
 
