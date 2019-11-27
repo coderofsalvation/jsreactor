@@ -1,4 +1,4 @@
-module.exports = function(){
+module.exports = function(opts){
 
     return {
         type:"object",
@@ -11,8 +11,9 @@ module.exports = function(){
                 type:"object",
                 properties:{
                     name:{ type:"string", required:true,options:{ inputAttributes:{placeholder:"Enter rule name"}} },
-                    disabled:{ type:"boolean",default:false,format:"checkbox",title:"disable this rule"},
-                    notes:{type:"string",format:"textarea",options:{ inputAttributes:{placeholder:"Enter notes here"}}}        
+                    notes:{type:"string",format:"textarea",options:{ inputAttributes:{placeholder:"Enter notes here"}}},
+                    language:{type:"string",enum: opts.languages || ['EN'] },
+                    disabled:{ type:"boolean",default:false,format:"checkbox",title:"disable this rule"}       
                 }
             },
             trigger:{

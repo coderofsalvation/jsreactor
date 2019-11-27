@@ -1,5 +1,13 @@
 module.exports = (slug,path) => [
     {
+        title:slug+"has property",
+        type:'object',
+        properties:{
+            type:{ type:'string', 'default':'exist',pattern:'^exist$',options:{hidden:true}},
+            path
+        }
+    },
+    {
         title:slug+"equals",
         type:'object',
         properties:{

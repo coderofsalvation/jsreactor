@@ -3,9 +3,9 @@ var get     = _.get
 var jre     = require('json-rules-engine')
 var debug   = require('debug')('bre')
 
-function BRE(adapter){
+function BRE(adapter,opts){
     var Channel = require('./Channel')(this)
-
+    opts            = opts || {}
     this.log        = (s) => console.log(`bre: ${s}`)
     this.schema     = {}
     this.channels   = {}
@@ -20,8 +20,9 @@ function BRE(adapter){
     this.addType     = Channel.addType 
 
     this.init = async () => {
-        this.schema = require('./schema.js')()
+        this.schema = require('./schema.js')(opts)
         this.engine = new jre.Engine()
+        require('./operators')(this.engine) // add custom operators
         for( var i in this.channels ){ 
             var c = this.channels[i]
             await c() // re-init schemas

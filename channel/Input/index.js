@@ -11,7 +11,7 @@ module.exports = function(opts){
     this.init = async () => {
         opts.bre.log("registering "+this.title)
         this.trigger = {
-            schema:  operators('input ',{type:"string"})
+            schema:  operators('input ',{type:"string",options:{inputAttributes:{placeholder:".foo"}}})
         }
         
         this.action  = {
