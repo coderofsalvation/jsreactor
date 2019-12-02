@@ -6,6 +6,7 @@ var debug   = require('debug')('bre')
 function BRE(adapter,opts){
     var Channel = require('./Channel')(this)
     opts            = opts || {}
+    this.opts       = opts
     this.log        = (s,prefix) => console.log( (prefix ? prefix : "bre: ") + `${s}`)
     this.schema     = {}
     this.channels   = {}
