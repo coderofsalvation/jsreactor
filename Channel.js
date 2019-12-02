@@ -4,6 +4,7 @@
 
 var _       = require('./_')
 var get     = _.get
+var peach   = require('promise-each')
 
 function Channel(bre){
 
@@ -69,29 +70,36 @@ function Channel(bre){
         this.log(`addChannel(${c.title})`)
     }
 
-    this.runAction = async (channel,operator,facts,results) => {
-        channel.action.schema.map( async (a) => {
+    this.runAction = async (channel,operator,facts,results) => new Promise((resolve,reject)=> {
+        Promise.resolve( channel.action.schema )
+        .then( peach( async (a) => {
             if( get(operator,'config.type') == get(a,'properties.type.default') ){
                 if( get(a,'properties.type.operator') ){
-                    await a.properties.type.operator(facts,operator.config,results)
+                    return a.properties.type.operator(facts,operator.config,results)
                 }
             }
-        })
-    }
+        }))
+        .then(resolve)
+    })
 
-    this.runActions = async (ruleAction,facts,results) => {
-        if( !ruleAction.params ) return
-        ruleAction.params.map( async (operator) => {
-            try{
-                var t = new Date().getTime()
-                if( bre.channels[ruleAction.type]){
-                    var c = bre.channels[ ruleAction.type ].instance
-                    bre.log(`${ruleAction.type} (${facts.runid})`)
-                    await this.runAction(c,operator,facts,results)    
-                }else console.error(ruleAction.type+"-channel does not exist")
-            }catch(e){ console.error(e); }
-        })
-    }
+    this.runActions = async (ruleAction,facts,results) => new Promise( (resolve,reject) => {
+        if( !ruleAction.params ) return resolve()
+        Promise.resolve(ruleAction.params)
+        .then( peach( (operator) => new Promise( async (resolve,reject) => {
+                try{
+                    var t = new Date().getTime()
+                    var channel = bre.channels[operator.channel]
+                    if( channel){
+                        var c = channel.instance
+                        bre.log(`ACTION ${operator.channel} (${facts.runid})`)
+                        await this.runAction(c,operator,facts,results)    
+                    }else console.error(operator.channel+"-channel does not exist")
+                    resolve()
+                }catch(e){ console.error(e); }
+            })
+        ))
+        .then( resolve )
+    })
 
     return this
 }

@@ -6,7 +6,7 @@ var debug   = require('debug')('bre')
 function BRE(adapter,opts){
     var Channel = require('./Channel')(this)
     opts            = opts || {}
-    this.log        = (s) => console.log(`bre: ${s}`)
+    this.log        = (s,prefix) => console.log( (prefix ? prefix : "bre: ") + `${s}`)
     this.schema     = {}
     this.channels   = {}
     this.log("initing")
@@ -93,6 +93,7 @@ function BRE(adapter,opts){
             if( results.events.length == 0 ) return resolve(res)
             results.events.map( async (e) => await Channel.runActions(e,facts,results) )
             res.actions = (new Date().getTime()-t)+"ms"
+            console.log("DONE")
             return resolve(res)
         })
         .catch( (e) => {

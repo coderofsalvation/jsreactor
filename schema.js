@@ -12,14 +12,14 @@ module.exports = function(opts){
                 properties:{
                     name:{ type:"string", required:true,options:{ inputAttributes:{placeholder:"Enter rule name"}} },
                     notes:{type:"string",format:"textarea",options:{ inputAttributes:{placeholder:"Enter notes here"}}},
-                    language:{type:"string",enum: opts.languages || ['EN'] },
+                    language:{type:"string",default:"EN",enum: opts.languages || ['EN'] },
                     disabled:{ type:"boolean",default:false,format:"checkbox",title:"disable this rule"}       
                 }
             },
             trigger:{
                 title:"Trigger",
                 type:"array",
-                description:"Below are conditions, which need to be true, in order to execute the action-tab",
+                description:"All conditions below should be true",
                 options:{disable_array_reorder :true},
                 items:{
                     oneOf:[]

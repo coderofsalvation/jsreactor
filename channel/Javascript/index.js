@@ -1,13 +1,34 @@
+let runcode = require('safe-eval')
+
 module.exports = function(opts){
     var bre          = opts.bre
-    var Parse        = bre.Parse
     this.title       = "Javascript"
     this.description = "javascript snippet"  
     this.init = async () => {
         
-        var runJS = async (input,cfg,results) => {
-            new Function( 'input', 'cfg', 'results', 'log','error',cfg.js )(input,cfg,results,bre.log,console.error)
-        }               
+        var runJS = (input,cfg,results) => new Promise( async (resolve,reject) => {
+            var code = `new Promise( async (resolve,reject) => {
+                ${cfg.js}
+                resolve(input)
+            })`
+            var scope = Object.assign(opts,{
+                input,
+                cfg,
+                results,
+                log: (str) => bre.log(str,"         ↑  "),
+                console,
+                error:console.error    
+            })
+            try {
+                var r = await runcode(code,scope)
+                for( var i in r ) input[i] = r[i] // update input
+                console.dir(input)
+            } catch (e) {
+                console.log(e.stack)
+                console.error(e.stack)
+            }
+            resolve() // never reject since errors are handled above
+        })               
         
         this.trigger = { schema: []}
         
@@ -21,12 +42,12 @@ module.exports = function(opts){
                         js:{ 
                             type:"string", 
                             title:"code",
-                            description:"(input,cfg,results,log,error) => { ... }", 
+                            description:"async (input,cfg,results,log,error) => { ... }", 
                             default:"//input.users = await Parse.Query('User').limit(2).find()\n//error('boo')\n//log('hello world')\nreturn input\n",
                             format: "javascript",
                             "options": {
                                 "ace": {
-                                    /*"theme": "ace/theme/vibrant_ink",*/
+                                    "theme": "ace/theme/monokai",
                                     "tabSize": 2,
                                     "useSoftTabs": true,
                                     "wrap": true,
