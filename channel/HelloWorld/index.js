@@ -8,7 +8,6 @@ module.exports = function(opts){
     if( opts.defaultOperators ) this.title += " + default operators"
 
     this.init = async () => {
-        opts.bre.log("registering "+this.title)
         this.trigger = {
             schema: [
                 {

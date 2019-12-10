@@ -21,7 +21,7 @@ function BRE(adapter,opts){
     this.addChannel  = Channel.addChannel.bind(this) // alias
     this.addType     = Channel.addType 
 
-    this.init = () => new Promise( async (resolve,reject) => {
+    this.init = () => new Promise( async (resolve,reject) => {   
         this.schema = require('./schema.js')(opts)
         this.engine = new jre.Engine()
         require('./operators')(this.engine) // add custom operators
@@ -34,8 +34,7 @@ function BRE(adapter,opts){
         await this.loadRules()
         resolve()
     })
-    this.init = pMemoize(this.init,{maxAge:2000}) // do not call more then once per 2 secs
-
+    //this.init = pMemoize(this.init,{maxAge:2000}) // ratelimit
     
     // this is a placeholder which can be overruled from outside (to keep things orm-agnostic)
     this.loadRuleConfigs = () => {
@@ -51,7 +50,7 @@ function BRE(adapter,opts){
     this.onDatabaseSave = ( table, cb ) => {}
     
     this.loadRules = () => new Promise( (resolve,reject) => {
-        debug("processing rules")
+        console.log("loading rules")
         console.log("todo: p-memoise loadRules() and bind/reuse data to process-object")
         this.loadRuleConfigs()
         .then( (rules) => {
@@ -82,7 +81,7 @@ function BRE(adapter,opts){
         .then(resolve)
         .catch( reject )
     })
-
+    
     this.run = async (facts) => new Promise( async (resolve,reject) => {
         facts = facts || {}
         var t     = new Date().getTime()

@@ -40,7 +40,6 @@ function Channel(bre){
     
     this.addChannel = function( c ){
         this.channels[c.title] = async () => {
-            console.log(`initing ${c.title}`)
             await c.init()
             if( !get(c,'trigger.schema') ) throw `${c.title}: trigger.schema-object not found in module.exports`
             if( !get(c,'action.schema' ) ) throw `${c.title}: action.schema-object not found in module.exports`
