@@ -1,7 +1,8 @@
-var _       = require('./_')
-var get     = _.get
-var jre     = require('json-rules-engine')
-var debug   = require('debug')('bre')
+var _        = require('./_')
+var get      = _.get
+var jre      = require('json-rules-engine')
+var debug    = require('debug')('bre')
+var pMemoize = require('p-memoize')
 
 function BRE(adapter,opts){
     var Channel = require('./Channel')(this)
@@ -33,6 +34,8 @@ function BRE(adapter,opts){
         await this.loadRules()
         resolve()
     })
+    this.init = pMemoize(this.init,{maxAge:2000}) // do not call more then once per 2 secs
+
     
     // this is a placeholder which can be overruled from outside (to keep things orm-agnostic)
     this.loadRuleConfigs = () => {
