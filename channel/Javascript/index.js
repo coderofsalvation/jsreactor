@@ -18,7 +18,8 @@ module.exports = function(opts){
                 console:{
                     error:console.error,
                     log: (str) => bre.log(str,"┋ "), 
-                }
+                },
+                setTimeout
             })
             try {
                 var r = await runcode(code,scope)

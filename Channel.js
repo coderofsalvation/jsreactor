@@ -69,35 +69,34 @@ function Channel(bre){
         this.log(`addChannel(${c.title})`)
     }
 
-    this.runAction = async (channel,operator,facts,results) => new Promise((resolve,reject)=> {
+    this.runAction = async (channel,operator,facts,results) => new Promise( (resolve,reject)=> {
         Promise.resolve( channel.action.schema )
-        .then( peach( async (a) => {
+        .then( peach( (a) => {
             if( get(operator,'config.type') == get(a,'properties.type.default') ){
                 if( get(a,'properties.type.operator') ){
-                    return a.properties.type.operator(facts,operator.config,results)
+                    a.properties.type.operator(facts,operator.config,results)
                 }
             }
         }))
         .then(resolve)
+        .catch(reject)
     })
 
-    this.runActions = async (ruleAction,facts,results) => new Promise( (resolve,reject) => {
+    this.runActions = async (ruleAction,facts,results) => new Promise( async (resolve,reject) => {
         if( !ruleAction.params ) return resolve()
         Promise.resolve(ruleAction.params)
-        .then( peach( (operator) => new Promise( async (resolve,reject) => {
-                try{
-                    var t = new Date().getTime()
-                    var channel = bre.channels[operator.channel]
-                    if( channel){
-                        var c = channel.instance
-                        bre.log(`ACTION ${operator.channel} (${facts.runid})`)
-                        await this.runAction(c,operator,facts,results)    
-                    }else console.error(operator.channel+"-channel does not exist")
-                    resolve()
-                }catch(e){ console.error(e); }
-            })
-        ))
+        .then( peach( async (operator) => {
+            var t = new Date().getTime()
+            var channel = bre.channels[operator.channel]
+            if( channel){
+                var c = channel.instance
+                bre.log(`ACTION ${operator.channel} (${facts.runid})`)
+                this.runAction(c,operator,facts,results)
+            }else console.error(operator.channel+"-channel does not exist")
+
+        }))
         .then( resolve )
+        .catch(reject)
     })
 
     return this

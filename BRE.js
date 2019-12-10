@@ -86,7 +86,7 @@ function BRE(adapter,opts){
         .catch( reject )
     })
     
-    this.run = async (facts) => new Promise( async (resolve,reject) => {
+    this.run = (facts) => new Promise( async (resolve,reject) => {
         facts = facts || {}
         var t     = new Date().getTime()
         facts.runid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 7) 
@@ -99,8 +99,7 @@ function BRE(adapter,opts){
             res.actions = results.events.length
             res.output = {}
             if( results.events.length == 0 ) return resolve(res)
-            var promises = results.events.map( (e) => Channel.runActions(e,facts,results) )
-            await Promise.all(promises)
+            results.events.map( async (e) => await Channel.runActions(e,facts,results) )
             res.output = facts.output || {}
             res.actions = (new Date().getTime()-t)+"ms"
             return resolve(res)
