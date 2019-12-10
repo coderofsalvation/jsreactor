@@ -76,8 +76,10 @@ z.test('load Rule Configs (HelloWorld)',  async (t) => {
           "action": [
             {
               "config": {
-                "js": "console.log(\"foo\")",
-                "type": "javascript"
+                "config":{
+                  "js": "console.log(\"foo\")",
+                },
+                "type": "javascript"   
               },
               "channel": "Javascript"
             }

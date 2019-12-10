@@ -24,6 +24,10 @@ function BRE(adapter,opts){
     this.init = () => new Promise( async (resolve,reject) => {   
         this.schema = require('./schema.js')(opts)
         this.engine = new jre.Engine()
+        this.engine.on('success', (event,almanac,result) => {
+            this.log(`TRIGGER '${result.name}'`)
+            console.log("todo: update triggerred-column value")
+        })
         require('./operators')(this.engine) // add custom operators
         for( var i in this.channels ){ 
             var c = this.channels[i]
@@ -34,7 +38,7 @@ function BRE(adapter,opts){
         await this.loadRules()
         resolve()
     })
-    //this.init = pMemoize(this.init,{maxAge:2000}) // ratelimit
+    this.init = pMemoize(this.init,{maxAge:2000}) // ratelimit
     
     // this is a placeholder which can be overruled from outside (to keep things orm-agnostic)
     this.loadRuleConfigs = () => {
@@ -89,10 +93,6 @@ function BRE(adapter,opts){
         await this.init()
         debug("run("+JSON.stringify(facts)+")")
         var res = {runid: facts.runid, triggers: (new Date().getTime()-t)+"ms",actions:"0ms"}
-        this.engine.on('success', (event,almanac,result) => {
-            this.log(`TRIGGER '${result.name}' (${facts.runid})`)
-            console.log("todo: update triggerred-column value")
-        })
 
         this.engine.run(facts)
         .then( async (results) => {
@@ -107,7 +107,7 @@ function BRE(adapter,opts){
         })
         .catch( (e) => {
             this.log(JSON.stringify(res)) 
-            reject(e)
+            resolve(e)
         })
     })
 

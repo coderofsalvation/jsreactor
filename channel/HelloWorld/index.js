@@ -14,7 +14,9 @@ module.exports = function(opts){
                     type:"object",
                     title:"foo equals string",
                     properties:{
-                        type: bre.addType('helloEquals', async (input,cfg) => input.foo == cfg.value ),
+                        type: bre.addType('helloEquals', async (input,cfg) => {
+                            return input.foo == cfg
+                        }),
                         foo:{ type:"string", default:"my foo"},
                         bar:{ type:"boolean"},
                         flop: { "$ref":"#/definitions/mydef"} // references to 'mydef'
