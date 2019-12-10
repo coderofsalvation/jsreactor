@@ -8,21 +8,21 @@ module.exports = function(opts){
         
         var runJS = (input,cfg,results) => new Promise( async (resolve,reject) => {
             var code = `new Promise( async (resolve,reject) => {
-                ${cfg.js}
+                ${cfg.config.js}
                 resolve(input)
             })`
             var scope = Object.assign(opts,{
                 input,
                 cfg,
                 results,
-                log: (str) => bre.log(str,"         ↑  "),
-                console,
-                error:console.error    
+                console:{
+                    error:console.error,
+                    log: (str) => bre.log(str,"┋ "), 
+                }
             })
             try {
                 var r = await runcode(code,scope)
                 for( var i in r ) input[i] = r[i] // update input
-                console.dir(input)
             } catch (e) {
                 console.log(e.stack)
                 console.error(e.stack)
@@ -39,21 +39,28 @@ module.exports = function(opts){
                     title:" ",
                     properties:{
                         type: bre.addType('javascript', runJS ),
-                        js:{ 
-                            type:"string", 
-                            title:"code",
-                            description:"async (input,cfg,results,log,error) => { ... }", 
-                            default:"//input.users = await Parse.Query('User').limit(2).find()\n//error('boo')\n//log('hello world')\nreturn input\n",
-                            format: "javascript",
-                            "options": {
-                                "ace": {
-                                    "theme": "ace/theme/monokai",
-                                    "tabSize": 2,
-                                    "useSoftTabs": true,
-                                    "wrap": true,
-                                    maxLines:10,
-                                    minLines:10,
-                                    fontSize:'14px'
+                        config:{
+                            type:"object",
+                            title:"edit code",
+                            options:{disable_collapse:false,collapsed:true},
+                            properties:{
+                                js:{ 
+                                    type:"string", 
+                                    title:"javascript",
+                                    description:"async (input,cfg,results) => { input.output = {a:1} }", 
+                                    default:"//input.users = await somePromise()\n//console.error('boo')\n//console.log('hello world')\ninput.output = {a:1}\n",
+                                    format: "javascript",
+                                    "options": {
+                                        "ace": {
+                                            "theme": "ace/theme/monokai",
+                                            "tabSize": 2,
+                                            "useSoftTabs": true,
+                                            "wrap": true,
+                                            maxLines:20,
+                                            minLines:20,
+                                            fontSize:'14px'
+                                        }
+                                    }
                                 }
                             }
                         }

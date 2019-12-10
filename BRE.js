@@ -20,7 +20,7 @@ function BRE(adapter,opts){
     this.addChannel  = Channel.addChannel.bind(this) // alias
     this.addType     = Channel.addType 
 
-    this.init = async () => {
+    this.init = () => new Promise( async (resolve,reject) => {
         this.schema = require('./schema.js')(opts)
         this.engine = new jre.Engine()
         require('./operators')(this.engine) // add custom operators
@@ -31,7 +31,8 @@ function BRE(adapter,opts){
             Channel.addOperators(c.instance)
         }
         await this.loadRules()
-    }
+        resolve()
+    })
     
     // this is a placeholder which can be overruled from outside (to keep things orm-agnostic)
     this.loadRuleConfigs = () => {
@@ -48,6 +49,7 @@ function BRE(adapter,opts){
     
     this.loadRules = () => new Promise( (resolve,reject) => {
         debug("processing rules")
+        console.log("todo: p-memoise loadRules() and bind/reuse data to process-object")
         this.loadRuleConfigs()
         .then( (rules) => {
             rules.map( (rule) => {
@@ -79,6 +81,7 @@ function BRE(adapter,opts){
     })
 
     this.run = async (facts) => new Promise( async (resolve,reject) => {
+        facts = facts || {}
         var t     = new Date().getTime()
         facts.runid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 7) 
         await this.init()
@@ -86,15 +89,18 @@ function BRE(adapter,opts){
         var res = {runid: facts.runid, triggers: (new Date().getTime()-t)+"ms",actions:"0ms"}
         this.engine.on('success', (event,almanac,result) => {
             this.log(`TRIGGER '${result.name}' (${facts.runid})`)
+            console.log("todo: update triggerred-column value")
         })
 
         this.engine.run(facts)
         .then( async (results) => {
             res.actions = results.events.length
+            res.output = {}
             if( results.events.length == 0 ) return resolve(res)
-            results.events.map( async (e) => await Channel.runActions(e,facts,results) )
+            var promises = results.events.map( (e) => Channel.runActions(e,facts,results) )
+            await Promise.all(promises)
+            res.output = facts.output || {}
             res.actions = (new Date().getTime()-t)+"ms"
-            console.log("DONE")
             return resolve(res)
         })
         .catch( (e) => {

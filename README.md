@@ -1,7 +1,7 @@
 > WARNING: this project is in BETA
 
-An flexible IFTTT-engine with generated gui. 
-This is basically a wrapper for [json-rules-engine](https://npmjs.com/package/json-rules-engine).
+An flexible rule-engine enhanced with jsonschema for quick userinterface-generation (think IFTTT).
+This is basically a wrapper for [json-rules-engine](https://npmjs.com/package/json-rules-engine) enhanced with jsonschemas for user-interaction.
 
 Current backend-adapters:
 

@@ -3,7 +3,6 @@ var operators = require('./../../schema.operators')
 
 module.exports = function(opts){
     var bre          = opts.bre
-    var Parse        = bre.Parse
     this.title       = "HelloWorld" // this is the channel name
     this.description = "example plugin"  
     if( opts.defaultOperators ) this.title += " + default operators"
