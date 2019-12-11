@@ -38,7 +38,7 @@ function BRE(adapter,opts){
         await this.loadRules()
         resolve()
     })
-    this.init = pMemoize(this.init,{maxAge:2000}) // ratelimit
+    this.init = pMemoize(this.init,{maxAge:opts.MEMOIZE_AGE||2000}) // ratelimit
     
     // this is a placeholder which can be overruled from outside (to keep things orm-agnostic)
     this.loadRuleConfigs = () => {
@@ -99,6 +99,7 @@ function BRE(adapter,opts){
         .then( async (results) => {
             res.actions = results.events.length
             if( results.events.length == 0 ) return resolve(res)
+            console.log(JSON.stringify(results.events,null,2))
             for( var i in results.events )
                 await Channel.runActions(results.events[i],facts,results)
             res.output = facts.output || {}

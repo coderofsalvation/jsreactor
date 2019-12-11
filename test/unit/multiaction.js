@@ -45,7 +45,7 @@ z.test('loadRuleConfigs', async (t) => {
                     "config": {
                     "type": "javascript",
                     "config": {
-                        "js": "input.i+=1;console.log(2);"
+                        "js": "input.i+=1;console.log(2);console.log(JSON.stringify(cfg,null,2));"
                     }
                     },
                     "channel": "Javascript"

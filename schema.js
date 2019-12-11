@@ -15,16 +15,16 @@ module.exports = function(opts){
                 }
             },
             trigger:{
-                title:"Trigger",
+                title:"⚡ Trigger",
                 type:"array",
-                description:"All conditions below should be true",
+                description:"All blocks below should be true (AND)",
                 options:{disable_array_reorder :true},
                 items:{
                     oneOf:[]
                 }
             },  
             action:{
-                title:"Action",
+                title:"💥 Action",
                 type:"array",
                 uniqueItems: true,
                 items:{
@@ -38,6 +38,11 @@ module.exports = function(opts){
     if( opts.extraColumns ){
         var columns = schema.properties.basic.properties
         schema.properties.basic.properties = Object.assign(columns, opts.extraColumns )
+        schema.properties.extra = {
+            type:"object",
+            title:"Extra",
+            properties:opts.extraColumns
+        }
     }
 
     return schema
