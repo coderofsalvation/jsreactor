@@ -24,8 +24,8 @@ module.exports = function(opts){
                 setTimeout
             })
             // *TODO* this is not safe
-            await new Function('input','cfg','results','console','setTimeout',code)(scope.input,scope.cfg,scope.results,scope.console,scope.setTimeout)
-            return resolve()
+            //await new Function('input','cfg','results','console','setTimeout',code)(scope.input,scope.cfg,scope.results,scope.console,scope.setTimeout)
+            //return resolve()
             
             try {
                 var r = await runcode(code,scope)
