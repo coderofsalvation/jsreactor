@@ -36,7 +36,7 @@ z.test('loadRuleConfigs', async (t) => {
                     "config": {
                     "type": "javascript",
                     "config": {
-                        "js": "input.i+=1;input.password = String(Math.ceil(Math.random()*50000));\ninput.username = input.email.split(\"@\")[0] + '_' + \n               Math.random().toString(36).substr(2, 5);\nconsole.log(\"1\");\n // pass to next action"
+                        "js": "input.output.debug = true; input.i+=1;input.password = String(Math.ceil(Math.random()*50000));\ninput.username = input.email.split(\"@\")[0] + '_' + \n               Math.random().toString(36).substr(2, 5);\nconsole.log(\"1\");\n // pass to next action"
                     }
                     },
                     "channel": "Javascript"
@@ -89,10 +89,8 @@ z.test('run input', async (t) => {
         "fromLastName": "de Flopper"
     } 
     var result = await b.run(input)
-    console.dir(result) 
-    //var wait = new Promise((r,j)=>setTimeout(r,5000))
-    //await wait
     t.ok( result.runid && result.triggers && result.actions && result.output,"result obj ok" )
+    t.ok( result.input.i == 3 && result.input.password && result.input.username, "modified input was forwarded" )
 })
 
 

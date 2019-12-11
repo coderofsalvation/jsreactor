@@ -98,11 +98,11 @@ function BRE(adapter,opts){
         this.engine.run(facts)
         .then( async (results) => {
             res.actions = results.events.length
-            res.output = {}
             if( results.events.length == 0 ) return resolve(res)
             for( var i in results.events )
                 await Channel.runActions(results.events[i],facts,results)
             res.output = facts.output || {}
+            if( res.output.debug ) res.input = facts
             res.actions = (new Date().getTime()-t)+"ms"
             return resolve(res)
         })

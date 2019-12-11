@@ -6,7 +6,7 @@ let validate  = require('tv4').validate
 module.exports = function(opts){
     var bre          = opts.bre
     this.title       = "Input" // this is the channel name
-    this.description = "triggers actions based on input-data"  
+    this.description = "filters input"  
     
     this.init = async () => {
         this.trigger = {

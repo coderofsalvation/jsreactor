@@ -53,8 +53,8 @@ module.exports = function(opts){
                                 js:{ 
                                     type:"string", 
                                     title:"javascript",
-                                    description:"async (input,cfg,results) => { input.output = {a:1} }", 
-                                    default:"//input.users = await somePromise()\n//console.error('boo')\n//console.log('hello world')\ninput.output = {a:1}\n",
+                                    description:`click here <a href="${process.env.JSREACTOR_JAVASCRIPT_DOC ? process.env.JSREACTOR_JAVASCRIPT_DOC : "https://github.com/coderofsalvation/jsreactor/blob/master/doc/node/javascript.md"}" target="_blank">documentation here</a>`, 
+                                    default:"//console.error('boo');\n//console.log('hello world');\ninput.output = {a:1};\ninput.output.debug = true;",
                                     format: "javascript",
                                     "options": {
                                         "ace": {

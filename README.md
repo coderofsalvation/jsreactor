@@ -71,4 +71,10 @@ then in your cloud-code entrypoint-file (`cloud/index.js` e.g.) add it:
     new BREDatabase({bre, classes:['User','School']})
 ++  new MyChannel({bre})
 ```
+
+## Environment variables
+
+| name | default | comment | 
+|-|-|-|
+|JSREACTOR_JAVASCRIPT_DOC | https://github.com/coderofsalvation/jsreactor/blob/master/doc/node/javascript.md | displays link to api reference in javascript editor |
     
