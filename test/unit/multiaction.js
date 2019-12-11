@@ -89,7 +89,7 @@ z.test('run input', async (t) => {
         "fromLastName": "de Flopper"
     } 
     var result = await b.run(input)
-    //console.dir(result) 
+    console.dir(result) 
     var wait = new Promise((r,j)=>setTimeout(r,1000))
     await wait
     t.ok( result.runid && result.triggers && result.actions && result.output,"result obj ok" )

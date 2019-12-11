@@ -7,10 +7,12 @@ module.exports = function(opts){
     this.init = async () => {
         
         var runJS = (input,cfg,results) => new Promise( async (resolve,reject) => {
+            
             var code = `new Promise( async (resolve,reject) => {
                 ${cfg.config.js}
                 resolve(input)
             })`
+            
             var scope = Object.assign(opts,{
                 input,
                 cfg,
@@ -21,6 +23,10 @@ module.exports = function(opts){
                 },
                 setTimeout
             })
+            // *TODO* this is not safe
+            await new Function('input','cfg','results','console','setTimeout',code)(scope.input,scope.cfg,scope.results,scope.console,scope.setTimeout)
+            return resolve()
+            
             try {
                 var r = await runcode(code,scope)
                 for( var i in r ) input[i] = r[i] // update input

@@ -69,34 +69,34 @@ function Channel(bre){
         this.log(`addChannel(${c.title})`)
     }
 
-    this.runAction = async (channel,operator,facts,results) => new Promise( (resolve,reject)=> {
-        Promise.resolve( channel.action.schema )
-        .then( peach( (a) => {
+    this.runAction = (channel,operator,facts,results) => new Promise( async (resolve,reject)=> {
+        for( var i in channel.action.schema ){
+            var a = channel.action.schema[i]
             if( get(operator,'config.type') == get(a,'properties.type.default') ){
                 if( get(a,'properties.type.operator') ){
-                    a.properties.type.operator(facts,operator.config,results)
+                    try{             
+                        await a.properties.type.operator(facts,operator.config,results)
+                    }catch(e){ console.error(e) }
                 }
             }
-        }))
-        .then(resolve)
-        .catch(reject)
+        }
+        resolve()
     })
 
-    this.runActions = async (ruleAction,facts,results) => new Promise( async (resolve,reject) => {
+    this.runActions = (ruleAction,facts,results) => new Promise( async (resolve,reject) => {
         if( !ruleAction.params ) return resolve()
-        Promise.resolve(ruleAction.params)
-        .then( peach( async (operator) => {
+        for( var i in ruleAction.params){
+            var operator = ruleAction.params[i]
             var t = new Date().getTime()
             var channel = bre.channels[operator.channel]
+            console.log(operator.channel)
             if( channel){
                 var c = channel.instance
                 bre.log(`ACTION ${operator.channel} (${facts.runid})`)
-                this.runAction(c,operator,facts,results)
-            }else console.error(operator.channel+"-channel does not exist")
-
-        }))
-        .then( resolve )
-        .catch(reject)
+                await this.runAction(c,operator,facts,results) // superWERIDDDDDDDDDDDDDDDDD
+            }else console.error(operator.channel+"-channel does not exist")            
+        }
+        resolve()
     })
 
     return this

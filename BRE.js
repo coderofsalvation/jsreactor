@@ -99,7 +99,8 @@ function BRE(adapter,opts){
             res.actions = results.events.length
             res.output = {}
             if( results.events.length == 0 ) return resolve(res)
-            results.events.map( async (e) => await Channel.runActions(e,facts,results) )
+            for( var i in results.events )
+                await Channel.runActions(results.events[i],facts,results)
             res.output = facts.output || {}
             res.actions = (new Date().getTime()-t)+"ms"
             return resolve(res)
