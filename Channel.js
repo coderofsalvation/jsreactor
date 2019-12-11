@@ -74,7 +74,7 @@ function Channel(bre){
             var a = channel.action.schema[i]
             if( get(operator,'config.type') == get(a,'properties.type.default') ){
                 if( get(a,'properties.type.operator') ){
-                    try{             
+                    try{      
                         await a.properties.type.operator(facts,operator.config,results)
                     }catch(e){ console.error(e) }
                 }

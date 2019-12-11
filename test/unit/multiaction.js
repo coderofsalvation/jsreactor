@@ -36,7 +36,7 @@ z.test('loadRuleConfigs', async (t) => {
                     "config": {
                     "type": "javascript",
                     "config": {
-                        "js": "input.i+=1; input.password = String(Math.ceil(Math.random()*50000));\ninput.username = input.email.split(\"@\")[0] + '_' + \n               Math.random().toString(36).substr(2, 5);\nconsole.log(\"1\");\nreturn input // pass to next action"
+                        "js": "input.i+=1;input.password = String(Math.ceil(Math.random()*50000));\ninput.username = input.email.split(\"@\")[0] + '_' + \n               Math.random().toString(36).substr(2, 5);\nconsole.log(\"1\");\n // pass to next action"
                     }
                     },
                     "channel": "Javascript"
@@ -45,7 +45,7 @@ z.test('loadRuleConfigs', async (t) => {
                     "config": {
                     "type": "javascript",
                     "config": {
-                        "js": "input.i+=1;console.log(2)"
+                        "js": "input.i+=1;console.log(2);"
                     }
                     },
                     "channel": "Javascript"
@@ -54,7 +54,7 @@ z.test('loadRuleConfigs', async (t) => {
                     "config": {
                     "type": "javascript",
                     "config": {
-                        "js": "input.i+=1;console.log(3)"
+                        "js": "var w = new Promise((r,j)=>setTimeout(r,500)); await w; input.i+=1;console.log(3)"
                     }
                     },
                     "channel": "Javascript"
@@ -90,8 +90,8 @@ z.test('run input', async (t) => {
     } 
     var result = await b.run(input)
     console.dir(result) 
-    var wait = new Promise((r,j)=>setTimeout(r,1000))
-    await wait
+    //var wait = new Promise((r,j)=>setTimeout(r,5000))
+    //await wait
     t.ok( result.runid && result.triggers && result.actions && result.output,"result obj ok" )
 })
 

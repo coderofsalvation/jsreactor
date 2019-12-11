@@ -9,10 +9,12 @@ module.exports = function(opts){
         var runJS = (input,cfg,results) => new Promise( async (resolve,reject) => {
             
             var code = `new Promise( async (resolve,reject) => {
-                ${cfg.config.js}
-                resolve(input)
+                try{
+                    ${cfg.config.js}
+                    resolve(input)
+                }catch(e){ reject(e) }
             })`
-            
+
             var scope = Object.assign(opts,{
                 input,
                 cfg,
@@ -23,18 +25,15 @@ module.exports = function(opts){
                 },
                 setTimeout
             })
-            // *TODO* this is not safe
-            //await new Function('input','cfg','results','console','setTimeout',code)(scope.input,scope.cfg,scope.results,scope.console,scope.setTimeout)
-            //return resolve()
-            
             try {
                 var r = await runcode(code,scope)
                 for( var i in r ) input[i] = r[i] // update input
             } catch (e) {
+                input.output.error = e.stack
                 console.log(e.stack)
                 console.error(e.stack)
             }
-            resolve() // never reject since errors are handled above
+            resolve(input) // never reject since errors are handled above
         })               
         
         this.trigger = { schema: []}
