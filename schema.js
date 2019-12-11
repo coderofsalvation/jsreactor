@@ -36,8 +36,6 @@ module.exports = function(opts){
     }
 
     if( opts.extraColumns ){
-        var columns = schema.properties.basic.properties
-        schema.properties.basic.properties = Object.assign(columns, opts.extraColumns )
         schema.properties.extra = {
             type:"object",
             title:"Extra",
