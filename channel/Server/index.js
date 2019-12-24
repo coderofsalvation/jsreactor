@@ -31,9 +31,9 @@ module.exports = function(opts){
                     if( match && !cfg.blocking ) input.req().next()
                     return match
                 }),
-                pattern:{type:"string",format:"checkbox",default:"/foo.html",description:"turn on regex for patterns like ^\\/(foo|bar)$ e.g."},
+                pattern:{type:"string",default:"/foo.html",description:"turn on regex for patterns like ^\\/(foo|bar)$ e.g."},
                 regex:{type:"boolean",format:"checkbox",default:false,title:"regex"},
-                blocking:{type:"boolean",default:false,description:"block middleware further in the chain"}
+                blocking:{type:"boolean",format:"checkbox",default:false,description:"block middleware further in the chain"}
             }            
         })
     
