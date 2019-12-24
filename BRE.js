@@ -14,7 +14,8 @@ function BRE(adapter,opts){
     this.log("initing")
 
     // rules engine
-    this.engine = new jre.Engine()
+    this.rules    = [] // recent loaded rules
+    this.engine   = new jre.Engine()
     this.toJSON   = ( ) => JSON.stringify( this.engine.rules.map( (r) => r.toJSON() ) )
     this.loadJSON = (j) => JSON.parse(j).map( (jstr) => this.engine.addRule(new Rule(jstr) ) )
     
@@ -55,9 +56,9 @@ function BRE(adapter,opts){
     
     this.loadRules = () => new Promise( (resolve,reject) => {
         console.log("loading rules")
-        console.log("todo: p-memoise loadRules() and bind/reuse data to process-object")
         this.loadRuleConfigs()
         .then( (rules) => {
+            this.rules = rules
             rules.map( (rule) => {
                 if( !rule.config.trigger ) return
                 var r = {
@@ -94,12 +95,10 @@ function BRE(adapter,opts){
         await this.init()
         debug("run("+JSON.stringify(facts)+")")
         var res = {runid: facts.runid, triggers: (new Date().getTime()-t)+"ms",actions:"0ms"}
-
         this.engine.run(facts)
         .then( async (results) => {
             res.actions = results.events.length
             if( results.events.length == 0 ) return resolve(res)
-            console.log(JSON.stringify(results.events,null,2))
             for( var i in results.events )
                 await Channel.runActions(results.events[i],facts,results)
             res.output = facts.output || {}
@@ -126,6 +125,8 @@ function BRE(adapter,opts){
 
     if(adapter) adapter(this)
     
+    // attach to process for convenience (Server plugin e.g.)
+    if( typeof process != "undefined" ) process.bre = this
     return this
 }
 

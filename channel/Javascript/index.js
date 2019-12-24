@@ -15,14 +15,15 @@ module.exports = function(opts){
                 }catch(e){ reject(e) }
             })`
 
+            var jconsole = {}
+            for( var i in console ) jconsole[i] = console[i]
+            jconsole.log = (str) => bre.log(str,"┋ ")
+
             var scope = Object.assign(opts,{
                 input,
                 cfg,
                 results,
-                console:{
-                    error:console.error,
-                    log: (str) => bre.log(str,"┋ "), 
-                },
+                console:jconsole,
                 setTimeout
             })
             try {

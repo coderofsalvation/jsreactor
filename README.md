@@ -22,7 +22,7 @@ var myBackendAdapter = async (bre) => {
 }
 
 var b = BRE(/* myBackendAdapter */ )
-var inputChannel = require('jsreactor/channel/Input)
+var inputChannel = require('@coderofsalvation/jsreactor/channel/Input)
 new inputChannel(b)
 b.init() // first init
     
@@ -30,11 +30,17 @@ b.run({foo:"bar"}) // data will be passed thru the business rules engine
                    // and conditionally triggers actions
 ```
 
+> jsreactor includes the following [basic channels](channel)
+
 ## Installing channels
 
 Search for `jsreactor-channel` on npm, and then install it (e.g. `npm install jsreactor-channel-sendgrid`):
 
 ```
+// optional: jsreactor's Server-channel is shipped with 
+// express-compatible middleware
+app.use( require('@coderofsalvation/jsreactor/channel/Server').middleware )
+
 // include
 require('glob').sync("node_modules/jsreactor-channel-**/index.js")
 .map( (c) => {

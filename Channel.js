@@ -15,7 +15,10 @@ function Channel(bre){
                 try{
                     var vars = {}
                     var input = _.mapToObject(f.factMap)
-                    for( var i in input ) if( input[i].value ) vars[i]  = input[i].value
+                    for( var i in input ){
+                        if( input[i].type == 'CONSTANT' && input[i].value ) vars[i]  = input[i].value
+                        if( input[i].type == 'DYNAMIC'                    ) vars[i]  = input[i].calculationMethod
+                    }
                     resolve(vars)
                 } catch(e){ reject(e) }
             })
