@@ -8,6 +8,22 @@ module.exports = (slug,path) => [
         }
     },
     {
+        title:slug+"has property not defined",
+        type:'object',
+        properties:{
+            type:{ type:'string', 'default':'notexist',pattern:'^notexist$',options:{hidden:true}},
+            path
+        }
+    },
+    {
+        title:slug+"has empty property",
+        type:'object',
+        properties:{
+            type:{ type:'string', 'default':'empty',pattern:'^empty$',options:{hidden:true}},
+            path
+        }
+    },      
+    {
         title:slug+"equals",
         type:'object',
         properties:{
