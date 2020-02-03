@@ -5,6 +5,12 @@ module.exports = function(opts){
     this.title       = "Javascript"
     this.description = "javascript snippet"  
     this.init = async () => {
+
+        let clone = (d) => {
+            var t = {}
+            for( var i in d ) t[i] = d[i]
+            return t
+        }
         
         var runJS = (input,cfg,results) => new Promise( async (resolve,reject) => {
             
@@ -22,6 +28,7 @@ module.exports = function(opts){
             var scope = Object.assign(opts,{
                 input,
                 cfg,
+                clone,
                 results,
                 console:jconsole,
                 setTimeout
@@ -30,9 +37,9 @@ module.exports = function(opts){
                 var r = await runcode(code,scope)
                 for( var i in r ) input[i] = r[i] // update input
             } catch (e) {
-                input.output.error = e.stack
                 console.log(e.stack)
                 console.error(e.stack)
+                input.output.error = e.stack
             }
             resolve(input) // never reject since errors are handled above
         })               

@@ -5,7 +5,7 @@ var debug    = require('debug')('bre')
 var pMemoize = require('p-memoize')
 
 function BRE(adapter,opts){
-    var Channel = require('./Channel')(this)
+    var Channel     = this.Channel = require('./Channel')(this)
     opts            = opts || {}
     this.opts       = opts
     this.log        = (s,prefix) => console.log( (prefix ? prefix : "bre: ") + `${s}`)
@@ -76,7 +76,7 @@ function BRE(adapter,opts){
                     },
                     event: {
                         type: rule.config.action[0] ? rule.config.action[0].channel : '',
-                        params: rule.config.action
+                        params: rule
                     }
                 }
                 debug(JSON.stringify(r,null,2))
@@ -100,7 +100,7 @@ function BRE(adapter,opts){
             res.actions = results.events.length
             if( results.events.length == 0 ) return resolve(res)
             for( var i in results.events )
-                await Channel.runActions(results.events[i],facts,results)
+                await Channel.runActions(results.events[i].params,facts,results)
             res.output = facts.output || {}
             if( res.output.debug ) res.input = facts
             res.actions = (new Date().getTime()-t)+"ms"

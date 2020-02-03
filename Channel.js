@@ -86,20 +86,19 @@ function Channel(bre){
         resolve()
     })
 
-    this.runActions = (ruleAction,facts,results) => new Promise( async (resolve,reject) => {
-        if( !ruleAction.params ) return resolve()
-        for( var i in ruleAction.params){
-            var operator = ruleAction.params[i]
+    this.runActions = (rule,facts,results) => new Promise( async (resolve,reject) => {
+        if( !rule ) return resolve()
+        for( var i in rule.config.action){
+            var operator = rule.config.action[i]
             var t = new Date().getTime()
             var channel = bre.channels[operator.channel]
-            console.log(operator.channel)
             if( channel){
                 var c = channel.instance
                 bre.log(`ACTION ${operator.channel} (${facts.runid})`)
                 await this.runAction(c,operator,facts,results) // superWERIDDDDDDDDDDDDDDDDD
             }else console.error(operator.channel+"-channel does not exist")            
         }
-        resolve()
+        resolve(facts)
     })
 
     return this
