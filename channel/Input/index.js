@@ -40,11 +40,6 @@ module.exports = function(opts){
                             default:JSON.stringify({
                                 "type":"object",
                                 "properties":{
-                                  "action":{
-                                    "type":"string",
-                                    "pattern":"^foo$",
-                                    "required":true
-                                  },
                                   "param1":{
                                     "type":"boolean",
                                     "required":true
