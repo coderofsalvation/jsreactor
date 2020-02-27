@@ -95,14 +95,19 @@ function BRE(adapter,opts){
         await this.init()
         debug("run("+JSON.stringify(facts)+")")
         var res = {runid: facts.runid, triggers: (new Date().getTime()-t)+"ms",actions:"0ms"}
+        
         this.engine.run(facts)
         .then( async (results) => {
             res.actions = results.events.length
             if( results.events.length == 0 ) return resolve(res)
-            for( var i in results.events )
-                await Channel.runActions(results.events[i].params,facts,results)
+            
+            for( var i in results.events ){
+                var input = JSON.parse( JSON.stringify(facts) ) // dont share inputs across rules
+                await Channel.runActions(results.events[i].params,input,results)
+                facts.output = input.output                     // share outputs across rules
+            }
             res.output = facts.output || {}
-            if( res.output.debug ) res.input = facts
+            if( res.output.debug ) res.input = input
             res.actions = (new Date().getTime()-t)+"ms"
             return resolve(res)
         })

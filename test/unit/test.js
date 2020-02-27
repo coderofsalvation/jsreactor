@@ -4,6 +4,11 @@ var jre   = require('json-rules-engine')
 var b /*BRE engine */
 var HelloWorld = require('./../../channel/HelloWorld')
 
+require('./immutable')
+require('./helloworld')
+require('./multiaction')
+require('./concurrency')
+
 z.test('some grouped assertions', t => {
     t.ok(true, 'true is truthy')
     t.equal('bar', 'bar', 'that both string are equivalent')
