@@ -52,6 +52,7 @@ module.exports.middleware = (req,res,next) => {
     if( !process.bre || !process.bre.rules ) return next()
     process.bre.express = true
     var triggers = process.bre.rules.filter( (r) => {
+        if( !r.config || !r.config.trigger ) return false
         var matches = r.config.trigger.filter( (t) => {
             return  t.channel == 'Server' &&
                     t.config.type == "web_request_in" && 
