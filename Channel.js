@@ -94,7 +94,7 @@ function Channel(bre){
             var channel = bre.channels[operator.channel]
             if( channel){
                 var c = channel.instance
-                bre.log(`ACTION ${operator.channel} (${facts.runid})`)
+                bre.log(`[${rule.name}] ACTION ${operator.channel} (#${facts.runid})`)
                 await this.runAction(c,operator,facts,results) // superWERIDDDDDDDDDDDDDDDDD
             }else console.error(operator.channel+"-channel does not exist")            
         }

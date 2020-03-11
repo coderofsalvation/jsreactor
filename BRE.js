@@ -8,7 +8,7 @@ function BRE(adapter,opts){
     var Channel     = this.Channel = require('./Channel')(this)
     opts            = opts || {}
     this.opts       = opts
-    this.log        = (s,prefix) => console.log( (prefix ? prefix : "bre: ") + (typeof s == 'object' ? JSON.stringify(s,null,2) : `${s}`) )
+    this.log        = (s,prefix,opts) => console.log( (prefix ? prefix : "bre: ") + (typeof s == 'object' ? JSON.stringify(s,null,2) : `${s}`), opts )
     this.schema     = {}
     this.channels   = {}
     this.log("initing")
@@ -101,6 +101,8 @@ function BRE(adapter,opts){
             res.actions = results.events.length
             if( results.events.length == 0 ) return resolve(res)
             for( var i in results.events ){
+                var rule  = results.events[i].params
+                if( this.initLogger ) this.log = this.initLogger(log,rule)
                 var input = JSON.parse( JSON.stringify(facts) ) // dont share inputs across rules
                 input.output = facts.output                     // share outputs across rules
                 await Channel.runActions(results.events[i].params,input,results)

@@ -23,7 +23,7 @@ module.exports = function(opts){
 
             var jconsole = {}
             for( var i in console ) jconsole[i] = console[i]
-            jconsole.log = (str) => bre.log(str,"┋ ")
+            jconsole.log = (str,opts) => bre.log(str,"┋ ",opts)
 
             var scope = Object.assign(opts,{
                 input,
