@@ -34,10 +34,13 @@ module.exports = function(opts){
                 setTimeout
             })
             try {
-                var r = await runcode(code,scope)
+                var r = await runcode(code,scope,{filename:'Rule'})
                 for( var i in r ) input[i] = r[i] // update input
             } catch (e) {
-                console.log(e.stack)
+                var line     = parseInt( String(e.stack).match(/Rule:([0-9]+):/)[1] )
+                var errline  = code.split("\n")[line-11] || ''
+                bre.log("⚠ "+errline)
+                bre.log(e.stack)
                 console.error(e.stack)
                 input.output.error = e.stack
             }
