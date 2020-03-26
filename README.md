@@ -78,6 +78,21 @@ then in your cloud-code entrypoint-file (`cloud/index.js` e.g.) add it:
 ++  new MyChannel({bre})
 ```
 
+## Rerouting logging
+
+Many rules can mean many console.log()-calls in the wild.
+In case you want to reroute logging of rules use `initLogger()`:
+
+```
+bre.initLogger = (f,rule) => (msg,opts) => {
+    // f    = old log function (console.log with a bre prefix)
+    // rule = current triggered rule
+    // msg  = console.log(msg,... ) passed in a javascript action-block
+    // opts = console.log(...,opts) second argument passed to console.log
+    console.log(msg,{stream:"rule: "+rule.name})
+}
+```
+
 ## Environment variables
 
 | name | default | comment | 

@@ -88,6 +88,7 @@ function BRE(adapter,opts){
     })
     
     this.run = (facts) => new Promise( async (resolve,reject) => {
+        console.dir(facts)
         facts = facts || {}
         facts.output = {}
         var t     = new Date().getTime()
@@ -103,8 +104,8 @@ function BRE(adapter,opts){
             for( var i in results.events ){
                 var rule  = results.events[i].params
                 if( this.initLogger ) this.log = this.initLogger(log,rule)
-                var input = JSON.parse( JSON.stringify(facts) ) // dont share inputs across rules
-                input.output = facts.output                     // share outputs across rules
+                var input = Object.assign({},facts)  // copied version of input: dont share inputs across rules
+                input.output = facts.output          // share outputs across rules
                 await Channel.runActions(results.events[i].params,input,results)
                 facts.output = input.output                     // share outputs across rules
             }
