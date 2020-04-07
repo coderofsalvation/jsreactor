@@ -5,12 +5,6 @@ module.exports = function(opts){
     this.title       = "Javascript"
     this.description = "javascript snippet"  
     this.init = async () => {
-
-        let clone = (d) => {
-            var t = {}
-            for( var i in d ) t[i] = d[i]
-            return t
-        }
         
         var runJS = (input,cfg,results) => new Promise( async (resolve,reject) => {
             
@@ -28,7 +22,7 @@ module.exports = function(opts){
             var scope = Object.assign(opts,{
                 input,
                 cfg,
-                clone,
+                clone: (d) => Object.assign({},d),
                 results,
                 console:jconsole,
                 setTimeout
@@ -37,7 +31,7 @@ module.exports = function(opts){
                 var r = await runcode(code,scope,{filename:'Rule'})
                 for( var i in r ) input[i] = r[i] // update input
             } catch (e) {
-                var line     = parseInt( String(e.stack).match(/Rule:([0-9]+):/)[1] )
+                var line     = parseInt( String(e.stack).match(/Rule:([0-9]+):/)[1] || 0 )
                 var errline  = code.split("\n")[line-11] || ''
                 bre.log("⚠ "+errline)
                 bre.log(e.stack)
