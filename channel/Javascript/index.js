@@ -31,7 +31,8 @@ module.exports = function(opts){
                 var r = await runcode(code,scope,{filename:'Rule'})
                 for( var i in r ) input[i] = r[i] // update input
             } catch (e) {
-                var line     = parseInt( String(e.stack).match(/Rule:([0-9]+):/)[1] || 0 )
+                var lineStr  = String(e.stack).match(/Rule:([0-9]+):/) ? String(e.stack).match(/Rule:([0-9]+):/)[0] : 0
+                var line     = parseInt( lineStr )
                 var errline  = code.split("\n")[line-11] || e.stack
                 bre.log("⚠ "+errline)
                 bre.log(e.stack)
