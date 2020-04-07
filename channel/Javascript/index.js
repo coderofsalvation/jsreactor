@@ -32,7 +32,7 @@ module.exports = function(opts){
                 for( var i in r ) input[i] = r[i] // update input
             } catch (e) {
                 var line     = parseInt( String(e.stack).match(/Rule:([0-9]+):/)[1] || 0 )
-                var errline  = code.split("\n")[line-11] || ''
+                var errline  = code.split("\n")[line-11] || e.stack
                 bre.log("⚠ "+errline)
                 bre.log(e.stack)
                 console.error(e.stack)
