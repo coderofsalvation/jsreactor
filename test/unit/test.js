@@ -5,6 +5,7 @@ var b /*BRE engine */
 var HelloWorld = require('./../../channel/HelloWorld')
 
 require('./immutable')
+require('./multi-input')
 require('./helloworld')
 require('./multiaction')
 require('./concurrency')

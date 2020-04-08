@@ -19,25 +19,31 @@ module.exports = function(opts){
             for( var i in console ) jconsole[i] = console[i]
             jconsole.log = (str,opts) => bre.log(str,"┋ ",opts)
 
-            var scope = Object.assign(opts,{
-                input,
-                cfg,
-                clone: (d) => Object.assign({},d),
-                results,
-                console:jconsole,
-                setTimeout
-            })
-            try {
-                var r = await runcode(code,scope,{filename:'Rule'})
-                for( var i in r ) input[i] = r[i] // update input
-            } catch (e) {
-                var lineStr  = String(e.stack).match(/Rule:([0-9]+):/) ? String(e.stack).match(/Rule:([0-9]+):/)[0] : 0
-                var line     = parseInt( lineStr )
-                var errline  = code.split("\n")[line-11] || e.stack
-                bre.log("⚠ "+errline)
-                bre.log(e.stack)
-                console.error(e.stack)
-                input.output.error = e.stack
+            var inputs = input[0] ? input : [input] // support multi-input
+            console.log(inputs.length)
+            for( var x =0; typeof inputs[x] == 'object' ; x++ ){
+                var scope = Object.assign(opts,{
+                    input: inputs[x],
+                    cfg,
+                    clone: (d) => Object.assign({},d),
+                    results,
+                    console:jconsole,
+                    setTimeout
+                })
+
+                try {
+                    var r = await runcode(code,scope,{filename:'Rule'})
+                    for( var i in r ) inputs[x][i] = r[i] // update input
+                } catch (e) {
+                    var lineStr  = String(e.stack).match(/Rule:([0-9]+):/) ? String(e.stack).match(/Rule:([0-9]+):/)[0] : 0
+                    var line     = parseInt( lineStr )
+                    var errline  = code.split("\n")[line-11] || e.stack
+                    bre.log("⚠ "+errline)
+                    bre.log(e.stack)
+                    console.error(e.stack)
+                    inputs[x].output = inputs[x].output || {}
+                    inputs[x].output.error = e.stack
+                }
             }
             resolve(input) // never reject since errors are handled above
         })               

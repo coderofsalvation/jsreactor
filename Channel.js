@@ -37,7 +37,14 @@ function Channel(bre){
             if( !type.default )
                 return console.warn(`channel ${c.title} has no default type-prop :/`)
             if( type.operator )
-                bre.engine.addOperator( type.default, type.operator )
+                bre.engine.addOperator( type.default, function(operator,input,cfg,results){
+                    if( !operator(input,cfg,results) ) return false 
+                    var trigger = {}
+                    trigger[ c.title ] = cfg
+                    var exist = input.triggers.filter( (t) => JSON.stringify(t) == JSON.stringify(trigger) )
+                    if( exist.length == 0 ) input.triggers.push(trigger)
+                    return true
+                }.bind(null,type.operator))
         })
     }
     

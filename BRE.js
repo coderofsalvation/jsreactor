@@ -88,9 +88,9 @@ function BRE(adapter,opts){
     })
     
     this.run = (facts) => new Promise( async (resolve,reject) => {
-        console.dir(facts)
         facts = facts || {}
         facts.output = {}
+        facts.triggers = []
         var t     = new Date().getTime()
         facts.runid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 7) 
         await this.init()
