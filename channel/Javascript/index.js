@@ -20,7 +20,7 @@ module.exports = function(opts){
             jconsole.log = (str,opts) => bre.log(str,"┋ ",opts)
 
             var inputs = input[0] ? input : [input] // support multi-input
-            console.log(inputs.length)
+            
             for( var x =0; typeof inputs[x] == 'object' ; x++ ){
                 var scope = Object.assign(opts,{
                     input: inputs[x],

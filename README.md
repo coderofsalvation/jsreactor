@@ -93,6 +93,14 @@ bre.initLogger = (f,rule) => (msg,opts) => {
 }
 ```
 
+## Branching out
+
+Triggers who set an input-array on the output, will automatically be processed in batch
+```
+input.output.input    = []
+input.output.input[0] = {"email":"foo@gmail.com"}
+input.output.input[1] = {"email":"foo@gmail.com"}
+```
 ## Environment variables
 
 | name | default | comment | 

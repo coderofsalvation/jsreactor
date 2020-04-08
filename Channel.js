@@ -10,7 +10,7 @@ function Channel(bre){
 
     this.addTriggers = (c) => {
         // add channel (= dynamic Fact) to json-rules-engine npm package
-        bre.engine.addFact(c.title, (params, f) => {
+        bre.engine.addFact(c.title, async (params, f) => {
             return new Promise( async (resolve, reject) => {
                 try{
                     var vars = {}
@@ -36,15 +36,21 @@ function Channel(bre){
             var type = s.properties.type
             if( !type.default )
                 return console.warn(`channel ${c.title} has no default type-prop :/`)
-            if( type.operator )
-                bre.engine.addOperator( type.default, function(operator,input,cfg,results){
-                    if( !operator(input,cfg,results) ) return false 
-                    var trigger = {}
-                    trigger[ c.title ] = cfg
-                    var exist = input.triggers.filter( (t) => JSON.stringify(t) == JSON.stringify(trigger) )
-                    if( exist.length == 0 ) input.triggers.push(trigger)
+            if( type.operator ){
+                // wrap the function so we can pass succesful triggerdata to actions
+                let cb = async (operator,input,cfg,results) => {
+                    try{
+                        if( ! (await operator(input,cfg,results)) ) return false 
+                        var type    = typeof input.trigger[ c.title ]
+                        var isArray = type != "undefined" && typeof input.trigger[ c.title ].length != undefined
+                        if( type == 'undefined') input.trigger[ c.title ] = cfg
+                        if( type == 'object' && !isArray ) input.trigger[ c.title ] = [input.trigger[ c.title ], cfg]
+                        if( type == 'object' &&  isArray ) input.trigger[ c.title ].concat(cfg)
+                    }catch(e){ console.error(e.stack) }
                     return true
-                }.bind(null,type.operator))
+                }
+                bre.engine.addOperator( type.default, cb.bind(null,type.operator) )
+            }
         })
     }
     
@@ -102,7 +108,13 @@ function Channel(bre){
             if( channel){
                 var c = channel.instance
                 bre.log(`[${rule.name}] ACTION ${operator.channel} (#${facts.runid})`)
-                await this.runAction(c,operator,facts,results) // superWERIDDDDDDDDDDDDDDDDD
+                var inputs = facts.output.input ? facts.output.input : [facts]
+                for( var i = 0; inputs[i] != undefined; i++ ){
+                    var input = Object.assign( _.omit(['output'],facts), inputs[i] )
+                    input.output = _.omit(['input'],facts.output)
+                    await this.runAction(c,operator,input,results)
+                    for( var i in input ) facts[i] = input[i]
+                }
             }else console.error(operator.channel+"-channel does not exist")            
         }
         resolve(facts)

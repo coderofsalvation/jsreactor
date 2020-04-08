@@ -66,7 +66,7 @@ z.test('loadRuleConfigs', async (t) => {
               "config": {
               "type": "javascript",
               "config": {
-                  "js": "input.output.str = input.output.str || ''; input.output.str += '1'+input.v"
+                  "js": "input.output.str = input.output.str || ''; input.output.str += '1'+input.v; input.foo = 567"
               }
               },
               "channel": "Javascript"
@@ -97,6 +97,7 @@ z.test('rule A input mutations should not affect ruleB', async (t) => {
     foo:123,
   }
   await b.run(input)
-  console.dir(input)
+  console.dir(output)
+  t.ok(input.foo == 123,"input.foo was not modified")
   t.ok(output.str == '0A0B1A1B', "input-array should be processed per element" )
 })

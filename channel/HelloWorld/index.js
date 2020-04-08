@@ -31,7 +31,15 @@ module.exports = function(opts){
                     type:"object",
                     title:"hello bar",
                     properties:{
-                        type: bre.addType('doHello', async (input,cfg,results) => console.log("hello!") ),
+                        type: bre.addType('doHello', async (input,cfg,results) => {
+                            console.log("hello!")
+                            /* branch out in multiple actions like so:
+                             *
+                             * input.output.input = {}
+                             * input.output.input[0] = {foo:1}
+                             * input.output.input[1] = {foo:2}
+                             */ 
+                        }),
                         foo:{ type:"string"}
                     }
                 }            
