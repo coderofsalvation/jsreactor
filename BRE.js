@@ -103,7 +103,7 @@ function BRE(adapter,opts){
             if( results.events.length == 0 ) return resolve(res)
             for( var i in results.events ){
                 var rule  = results.events[i].params
-                if( this.initLogger ) this.log = this.initLogger(log,rule)
+                if( this.initLogger ) this.log = this.initLogger(log,rule) || this.log
                 var input = Object.assign({},facts)  // copied version of input: dont share inputs across rules
                 input.output = facts.output          // share outputs across rules
                 await Channel.runActions(results.events[i].params,input,results)
@@ -115,7 +115,7 @@ function BRE(adapter,opts){
             return resolve(res)
         })
         .catch( (e) => {
-            this.log(JSON.stringify(res)) 
+            console.info(JSON.stringify(res)) 
             resolve(e)
         })
     })
