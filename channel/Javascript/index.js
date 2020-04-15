@@ -20,8 +20,7 @@ module.exports = function(opts){
             jconsole.log = (str,opts) => bre.log(str,"┋ ",opts)
             jconsole.error = function(f,id,e){
                 console.dir(input)
-                f(`error in rule: ${id}`)
-                f(e)
+                f(`error in rule: ${id}\n`+e)
             }.bind(console,console.error,input.rule)
 
             var inputs = input[0] ? input : [input] // support multi-input
