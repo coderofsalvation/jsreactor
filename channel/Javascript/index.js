@@ -38,7 +38,7 @@ module.exports = function(opts){
                     var lineStr  = String(e.stack).match(/Rule:([0-9]+):/) ? String(e.stack).match(/Rule:([0-9]+):/)[0] : 0
                     var line     = parseInt( lineStr )
                     var errline  = code.split("\n")[line-11] || e.stack
-                    var errmsg   = "⚠ "+errline.split("\n").slice(0,3).join("\n")
+                    var errmsg   = "⚠ "+ errline ? errline.split("\n").slice(0,3).join("\n") : e
                     inputs[x].output = inputs[x].output || {}
                     inputs[x].output.error = e.stack
                     return reject(errmsg)
