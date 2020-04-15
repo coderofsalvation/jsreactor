@@ -18,7 +18,7 @@ module.exports = function(opts){
             var jconsole = {}
             for( var i in console ) jconsole[i] = console[i]
             jconsole.log = (str,opts) => bre.log(str,"┋ ",opts)
-            jconsole.error = function(f,e,id){
+            jconsole.error = function(f,id,e){
                 console.dir(input)
                 f(`error in rule: ${id}`)
                 f(e)
