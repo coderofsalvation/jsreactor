@@ -18,7 +18,7 @@ module.exports = function(opts){
             var jconsole = {}
             for( var i in console ) jconsole[i] = console[i]
             jconsole.log = (str,opts) => bre.log(str,"┋ ",opts)
-            jsoncole.error = function(f,e,id){
+            jconcole.error = function(f,e,id){
                 f(`error in ${input.rule}`)
                 f(e)
             }.bind(console,console.error,id)
