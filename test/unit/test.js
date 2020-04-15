@@ -4,6 +4,7 @@ var jre   = require('json-rules-engine')
 var b /*BRE engine */
 var HelloWorld = require('./../../channel/HelloWorld')
 
+require('./error')
 require('./immutable')
 require('./multi-input')
 require('./helloworld')

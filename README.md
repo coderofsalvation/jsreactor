@@ -105,5 +105,6 @@ input.output.input[1] = {"email":"foo@gmail.com"}
 
 | name | default | comment | 
 |-|-|-|
+|JSREACTOR_EDIT_URL | '%id%' | hint edit-links for error-reporting ('http://foo.com/%id%' => 'http://foo.com/l2343kl34'` )
 |JSREACTOR_JAVASCRIPT_DOC | https://github.com/coderofsalvation/jsreactor/blob/master/doc/node/javascript.md | displays link to api reference in javascript editor |
     

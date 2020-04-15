@@ -86,17 +86,17 @@ function Channel(bre){
     }
 
     this.runAction = (channel,operator,facts,results) => new Promise( async (resolve,reject)=> {
+        var error = 0
         for( var i in channel.action.schema ){
             var a = channel.action.schema[i]
             if( get(operator,'config.type') == get(a,'properties.type.default') ){
                 if( get(a,'properties.type.operator') ){
-                    try{      
-                        await a.properties.type.operator(facts,operator.config,results)
-                    }catch(e){ console.error(e) }
+                    try{ await a.properties.type.operator(facts,operator.config,results) }
+                    catch(e){ return reject(e) }
                 }
             }
         }
-        resolve()
+        resolve(error)
     })
 
     this.runActions = (rule,facts,results) => new Promise( async (resolve,reject) => {
@@ -109,12 +109,20 @@ function Channel(bre){
                 var c = channel.instance
                 bre.log(`[${rule.name}] ACTION ${operator.channel} (#${facts.runid})`)
                 var inputs = facts.output.input ? facts.output.input : [facts]
-                for( var i = 0; inputs[i] != undefined; i++ ){
-                    var input = Object.assign( _.omit(['output'],facts), inputs[i] )
+                var errors = 0
+                for( var j = 0; inputs[j] != undefined; j++ ){
+                    var input = Object.assign(  _.omit(['output'],facts), 
+                                                inputs[j], 
+                                                {rule:rule.name+` ${process.env.JSREACTOR_EDIT_URL||'#'}${rule.objectId}`} )
                     input.output = _.omit(['input'],facts.output)
-                    await this.runAction(c,operator,input,results)
-                    for( var i in input ) facts[i] = input[i]
+                    try{ await this.runAction(c,operator,input,results) }
+                    catch(e){
+                        console.error(e+`\n\tin rule: ${input.rule}`)
+                        errors += 1
+                    }
+                    for( var x in input ) facts[x] = input[x]
                 }
+                if( errors == j ) break; // halt further execution if everything errors
             }else console.error(operator.channel+"-channel does not exist")            
         }
         resolve(facts)
