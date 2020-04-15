@@ -20,7 +20,7 @@ module.exports = function(opts){
             jconsole.log = (str,opts) => bre.log(str,"┋ ",opts)
             jconsole.error = function(f,e,id){
                 console.dir(input)
-                f(`error in ${id}`)
+                f(`error in rule: ${id}`)
                 f(e)
             }.bind(console,console.error,input.rule)
 
