@@ -33,7 +33,7 @@ module.exports = function(opts){
             
             var jconsole = {}
             for( var i in console ) jconsole[i] = console[i]
-            jconsole.log = (str,opts) => bre.log(str,"┋ ",opts)
+            jconsole.log = (str,opts) => console.log(str,opts || {stream:input.rule.substr(0,15)})
             jconsole.error = function(f,id,e){
                 f(`error in rule: ${id}\n`+e)
             }.bind(console,console.error,input.rule)
