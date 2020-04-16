@@ -117,13 +117,13 @@ function Channel(bre){
             for( var j = 0; inputs[j] != undefined; j++ ){
                 var input = Object.assign(  _.omit(['output'],facts), 
                                             inputs[j], 
-                                            {rule:rule.name+` ${process.env.JSREACTOR_EDIT_URL||'#'}${rule.objectId}`} )
+                                            {rule:{name:rule.name,ref:`${process.env.JSREACTOR_EDIT_URL||'#'}${rule.objectId}`}} )
                 input.output = _.omit(['input'],facts.output)
                 try{ 
                     var res = await this.runAction(c,operator,input,results) 
                     if( res == undefined ) halt = true
                 }catch(e){
-                    console.error(e+`\n\tin rule: ${input.rule}`)
+                    console.error(e+`\n\tin rule: ${input.rule.name} ${input.rule.ref}`)
                     errors += 1
                 }
                 for( var x in input ) facts[x] = input[x]
