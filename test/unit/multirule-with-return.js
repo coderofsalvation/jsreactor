@@ -42,11 +42,11 @@ z.test('loadRuleConfigs', async (t) => {
             "config": {
             "type": "javascript",
             "config": {
-                "js": "console.log('A2');input.n+='A2';"
+                "js": "console.log('A2');input.n+='A2';input.output.A2 =true"
             }
             },
             "channel": "Javascript"
-        }
+          }
           ],
           "trigger": [
           ]
@@ -86,6 +86,7 @@ z.test('loadRuleConfigs', async (t) => {
 z.test('sync execution', async (t) => { 
   var input = {foo:"123",n:''}
   await b.run(input)
+  t.ok(input.output.A2 == undefined, "second action should not be executed")
   t.ok(input.output.executed,'second rule should be executed')
   t.ok(input.n == '', "input.n should not be mutated")
 })

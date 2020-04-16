@@ -86,17 +86,20 @@ function Channel(bre){
     }
 
     this.runAction = (channel,operator,facts,results) => new Promise( async (resolve,reject)=> {
-        var error = 0
+        var error  = 0
+        var result
         for( var i in channel.action.schema ){
             var a = channel.action.schema[i]
             if( get(operator,'config.type') == get(a,'properties.type.default') ){
                 if( get(a,'properties.type.operator') ){
-                    try{ await a.properties.type.operator(facts,operator.config,results) }
+                    try{ 
+                        result = await a.properties.type.operator(facts,operator.config,results) 
+                    }
                     catch(e){ return reject(e) }
                 }
             }
         }
-        resolve(error)
+        resolve(error > 0 ? error : result)
     })
 
     this.runActions = (rule,facts,results) => new Promise( async (resolve,reject) => {
@@ -114,19 +117,22 @@ function Channel(bre){
             bre.log(`[${rule.name}] ACTION ${operator.channel} (#${facts.runid})`)
             var inputs = facts.output.input ? facts.output.input : [facts]
             var errors = 0
+            var halt
             for( var j = 0; inputs[j] != undefined; j++ ){
                 var input = Object.assign(  _.omit(['output'],facts), 
                                             inputs[j], 
                                             {rule:rule.name+` ${process.env.JSREACTOR_EDIT_URL||'#'}${rule.objectId}`} )
                 input.output = _.omit(['input'],facts.output)
-                try{ await this.runAction(c,operator,input,results) }
-                catch(e){
+                try{ 
+                    var res = await this.runAction(c,operator,input,results) 
+                    if( res == undefined ) halt = true
+                }catch(e){
                     console.error(e+`\n\tin rule: ${input.rule}`)
                     errors += 1
                 }
                 for( var x in input ) facts[x] = input[x]
             }
-            if( errors == j ) break; // halt further execution if everything errors         
+            if( halt || errors == j ) break; // halt further execution if everything errors         
         }
         resolve(facts)
     })

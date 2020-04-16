@@ -29,7 +29,7 @@ module.exports = function(opts){
 
             var inputs = input[0] ? input : [input] // support multi-input
             
-            var errors = 0
+            var halt
             for( var x =0; typeof inputs[x] == 'object' ; x++ ){
                 var scope = Object.assign(opts,{
                     input: inputs[x],
@@ -43,7 +43,7 @@ module.exports = function(opts){
                 try {
                     var res = await runcode(code,scope,{filename:'Rule'})
                     if( typeof res == 'object ') for( var i in res ) inputs[x][i] = res[i] // update input
-                    else errors += res ? 0 : 1 
+                    if( res == undefined ) halt = true
                 } catch (e) {
                     var lineStr  = String(e.stack).match(/Rule:([0-9]+):/) ? String(e.stack).match(/Rule:([0-9]+):/)[0] : 0
                     var line     = parseInt( lineStr )
@@ -54,8 +54,7 @@ module.exports = function(opts){
                     return reject(errmsg)
                 }
             }
-            console.dir(errors)
-            resolve(input) // never reject since errors are handled above
+            resolve( halt ? undefined : input ) // never reject since errors are handled above
         })               
         
         this.trigger = { schema: []}

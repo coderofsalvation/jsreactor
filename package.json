@@ -1,6 +1,6 @@
 {
   "name": "@coderofsalvation/jsreactor",
-  "version": "1.1.61",
+  "version": "1.1.62",
   "description": "backend-agnostic business rule engine (IFTTT) for javascript",
   "main": "index.js",
   "scripts": {
