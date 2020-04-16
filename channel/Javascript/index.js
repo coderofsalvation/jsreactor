@@ -8,22 +8,33 @@ module.exports = function(opts){
         
         var runJS = (input,cfg,results) => new Promise( async (resolve,reject) => {
             
-            var code = `new Promise( async (resolve,reject) => {
-                try{
-                    let f = async () => { 
-                        ${cfg.config.js};
-                        return true 
-                    }
-                    var res = await f()
-                    resolve(res)
-                }catch(e){ reject(e) }
-            })`
+            let handleError = (e) => {
+                var lineStr  = String(e.stack).match(/Rule:([0-9]+):/) ? String(e.stack).match(/Rule:([0-9]+):/)[0] : 0
+                var line     = parseInt( lineStr )
+                var errline  = code.split("\n")[line-11] || e.stack
+                var errmsg   = "⚠ "+ (errline ? errline.split("\n").slice(0,3).join("\n") : e)
+                inputs[x].output = inputs[x].output || {}
+                inputs[x].output.error = e.stack
+                return reject(errmsg)
+            }
 
+            try{
+                var code = `new Promise( async (resolve,reject) => {
+                    try{
+                        let f = async () => { 
+                            ${cfg.config.js};
+                            return true 
+                        }
+                        var res = await f()
+                        resolve(res)
+                    }catch(e){ reject(e) }
+                })`    
+            }catch(e){ return handleError(e) }
+            
             var jconsole = {}
             for( var i in console ) jconsole[i] = console[i]
             jconsole.log = (str,opts) => bre.log(str,"┋ ",opts)
             jconsole.error = function(f,id,e){
-                console.dir(input)
                 f(`error in rule: ${id}\n`+e)
             }.bind(console,console.error,input.rule)
 
@@ -39,20 +50,11 @@ module.exports = function(opts){
                     console:jconsole,
                     setTimeout
                 })
-
                 try {
                     var res = await runcode(code,scope,{filename:'Rule'})
                     if( typeof res == 'object ') for( var i in res ) inputs[x][i] = res[i] // update input
                     if( res == undefined ) halt = true
-                } catch (e) {
-                    var lineStr  = String(e.stack).match(/Rule:([0-9]+):/) ? String(e.stack).match(/Rule:([0-9]+):/)[0] : 0
-                    var line     = parseInt( lineStr )
-                    var errline  = code.split("\n")[line-11] || e.stack
-                    var errmsg   = "⚠ "+ (errline ? errline.split("\n").slice(0,3).join("\n") : e)
-                    inputs[x].output = inputs[x].output || {}
-                    inputs[x].output.error = e.stack
-                    return reject(errmsg)
-                }
+                } catch (e) { return handleError(e) }
             }
             resolve( halt ? undefined : input ) // never reject since errors are handled above
         })               

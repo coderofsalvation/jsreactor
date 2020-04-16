@@ -31,10 +31,23 @@ z.test('loadRuleConfigs', async (t) => {
           "action": [
             {
               "config": {
-              "type": "javascript",
-              "config": {
-                  "js": "nonexistingfunction()"
-              }
+                "type": "javascript",
+                "config": {
+                    "js": `console.log("ja");return;
+                    var user   = await Parse.Object.get(input.user.objectId)
+                    
+                    return; // *TODO* fix this rule
+                    
+                    var school = 
+                    var Group  = input.request.object
+                    
+                    // find out if its the only (and therefore first group)
+                    // and current user is onboard == 'teacher'
+                    if( user.get('onBoard') == 'teacher' && school.Groups.length == 1 ){
+                      // send out email
+                    
+                    }else return; // dont send`
+                }
               },
               "channel": "Javascript"
             },

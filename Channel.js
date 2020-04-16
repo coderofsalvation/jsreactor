@@ -41,11 +41,7 @@ function Channel(bre){
                 let cb = async (operator,input,cfg,results) => {
                     try{
                         if( ! (await operator(input,cfg,results)) ) return false 
-                        var type    = typeof input.trigger[ c.title ]
-                        var isArray = type != "undefined" && typeof input.trigger[ c.title ].concat != undefined
-                        if( type == 'undefined') input.trigger[ c.title ] = cfg
-                        if( type == 'object' && !isArray ) input.trigger[ c.title ] = [input.trigger[ c.title ], cfg]
-                        if( type == 'object' &&  isArray ) input.trigger[ c.title ].concat(cfg)
+                        input.trigger[ c.title ] = cfg
                     }catch(e){ console.error(e.stack) }
                     return true
                 }
