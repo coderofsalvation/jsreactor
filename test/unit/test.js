@@ -10,6 +10,7 @@ require('./multi-input')
 require('./helloworld')
 require('./multiaction')
 require('./concurrency')
+require('./multirule-with-return')
 
 z.test('some grouped assertions', t => {
     t.ok(true, 'true is truthy')

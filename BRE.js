@@ -115,7 +115,7 @@ function BRE(adapter,opts){
             return resolve(res)
         })
         .catch( (e) => {
-            console.info(JSON.stringify(res)) 
+            console.error(e+' '+JSON.stringify(res)) 
             resolve(e)
         })
     })

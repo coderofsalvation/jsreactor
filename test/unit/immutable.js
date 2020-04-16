@@ -37,7 +37,16 @@ z.test('loadRuleConfigs', async (t) => {
                 }
               },
               "channel": "Javascript"
-          },
+            },
+            {
+              "config": {
+              "type": "javascript",
+                "config": {
+                    "js": "console.log('AAAAAAAAAAAAAAAAAAAA');input.output.mutated = input.n+'C'"
+                }
+              },
+              "channel": "Javascript"
+            },
           ],
           "trigger": [
             {
@@ -92,6 +101,7 @@ z.test('loadRuleConfigs', async (t) => {
 z.test('rule A input mutations should not affect ruleB', async (t) => { 
   var input = {foo:"123",n:'X'}
   await b.run(input)
-  t.ok(input.n == 'X', "input.n should be unchanged")
+  t.ok(input.output.mutated = 'XAC','input should be mutatable between actions from same rule')
+  t.ok(input.n == 'X', "input.n should be unchanged for next rule")
   t.ok(input.output.n == 'AB', "input.output.n should be unchanged") 
 })

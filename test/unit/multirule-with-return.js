@@ -33,21 +33,48 @@ z.test('loadRuleConfigs', async (t) => {
               "config": {
               "type": "javascript",
               "config": {
-                  "js": "console.log('AAAAAAAAAAAAAAAAAAAA');input.n+='A';"
+                  "js": "console.log('A1');input.n+='A1'; return;"
+              }
+              },
+              "channel": "Javascript"
+          },
+          {
+            "config": {
+            "type": "javascript",
+            "config": {
+                "js": "console.log('A2');input.n+='A2';"
+            }
+            },
+            "channel": "Javascript"
+        }
+          ],
+          "trigger": [
+          ]
+        },
+        "objectId": "3Kiu8bXNd6"
+      },
+      {
+        "createdAt": "2019-11-10T13:47:45.696Z",
+        "updatedAt": "2019-11-10T13:47:59.796Z",
+        "name": "test",
+        "config": {
+          "basic": {
+            "name": "test",
+            "notes": "test",
+            "disabled": false
+          },
+          "action": [
+            {
+              "config": {
+              "type": "javascript",
+              "config": {
+                  "js": "console.log('BBBBBBBBBBBBBBBB');input.n+='B'; input.output.executed = true;"
               }
               },
               "channel": "Javascript"
           },
           ],
-          "trigger": [
-            {
-              "config": {
-                "type": "helloEquals",
-                "value": "123"
-              },
-              "channel": "HelloWorld"
-            }
-          ]
+          "trigger": []
         },
         "objectId": "3Kiu8bXNd6"
       }
@@ -59,13 +86,12 @@ z.test('loadRuleConfigs', async (t) => {
 z.test('sync execution', async (t) => { 
   var input = {foo:"123",n:''}
   await b.run(input)
-  input.n+='B'
-  console.log(input.n)
-  t.ok(input.n == 'B', "should be sync")
+  t.ok(input.output.executed,'second rule should be executed')
+  t.ok(input.n == '', "input.n should not be mutated")
 })
 
 /*
-z.test('run input through rules engine', async (t) => { 
+z.test('run input through rules engine in parallel', async (t) => { 
     var p = []
     var n = 50
     for( var i =0;i < n;i++)
