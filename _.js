@@ -35,8 +35,14 @@ var _ = {
             obj[key] = value;
             return obj;
         }, {});
-    }
-    
+    },
+	map: async (arr,cb,onerror) => { // async map
+	  var res = []
+	  for( var i = 0; arr[i] != undefined; i++ ){
+		try{ res.push( await cb(arr[i],i) ) }catch(e){ onerror(e,i,res) }
+	  }
+	  return res
+	}
 }
 
 module.exports = _

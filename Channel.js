@@ -82,7 +82,6 @@ function Channel(bre){
     }
 
     this.runAction = (channel,operator,facts,results) => new Promise( async (resolve,reject)=> {
-        var error  = 0
         var result
         for( var i in channel.action.schema ){
             var a = channel.action.schema[i]
@@ -95,8 +94,22 @@ function Channel(bre){
                 }
             }
         }
-        resolve(error > 0 ? error : result)
+        resolve(result)
     })
+	
+	this.runMultiInput = async (input,cb,onerror) => {
+		var inputs = input[0] ? input : [input] // always enforce multi-input    
+        var halt
+		var res = []
+        for( var x =0; typeof inputs[x] == 'object' ; x++ ){	
+			try{ 
+				res[x] = await cb(inputs[x]) 
+			    if( typeof res[x] == 'object ') for( var i in res[x] ) inputs[x][i] = res[x][i] // update input
+                input.output = Object.assign(input.output,inputs[x].output)			
+			}catch(e){ onerror(e,inputs[x],x,res) }
+		}
+		return res
+	}
 
     this.runActions = (rule,facts,results) => new Promise( async (resolve,reject) => {
         if( !rule ) return resolve()
@@ -111,25 +124,36 @@ function Channel(bre){
             }
             var c = channel.instance
             bre.log(`[${rule.name}] ACTION ${operator.channel} (#${facts.runid})`)
-            var inputs = facts.output.input ? facts.output.input : [facts]
+            // lets always assume multi-input:
+			//   facts.output.input --- in case a trigger produces multi-input
+			//   facts              --- normal (single-input) scenario
+			var inputs = facts.output.input ? facts.output.input : [facts]
             var errors = 0
             var halt
+			var res 
             for( var j = 0; inputs[j] != undefined; j++ ){
                 var input = Object.assign(  _.omit(['output'],facts), 
                                             inputs[j], 
                                             {rule:{name:rule.name,ref:`${process.env.JSREACTOR_EDIT_URL||'#'}${rule.objectId}`}} )
                 input.output = _.omit(['input'],facts.output)
-                try{ 
-                    var res = await this.runAction(c,operator,input,results) 
+				try{ 
+                    res = await this.runAction(c,operator,input,results) 
                     if( res == undefined ) halt = true
                 }catch(e){
                     console.error(e+`\n\tin rule: ${input.rule.name} ${input.rule.ref}`)
                     errors += 1
                 }
-                for( var x in input ) facts[x] = input[x]
-            }
-            if( halt || errors == j ) break; // halt further execution if everything errors         
-        }
+				var output = Object.assign(facts.output, _.get(res,'output',{}) )
+				for( var x in input ) facts[x] = input[x]
+				facts.output = output
+			}
+			bre.log("errors="+errors+' j='+j)
+			
+		    if( halt || errors == j ){
+				bre.log("errors="+errors+' j='+j+" halt="+(halt?"ja":"nee"))
+				break; // halt further execution if everything errors         
+			}
+		}
         resolve(facts)
     })
 

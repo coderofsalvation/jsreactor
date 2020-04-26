@@ -33,6 +33,14 @@ module.exports = function(opts){
                     properties:{
                         type: bre.addType('doHello', async (input,cfg,results) => {
                             console.log("hello!")
+							 
+							/* process multiple inputs like so:
+							 *
+							 * await bre.Channel.runMultiInput( input, async (minput,i) => {
+			                 *    return process(minput)
+							 * }, console.error )
+                             */                             
+							 
                             /* branch out in multiple actions like so:
                              *
                              * input.output.input = {}

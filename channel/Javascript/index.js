@@ -1,4 +1,5 @@
 let runcode = require('safe-eval')
+let _  	    = require('./../../_')
 
 module.exports = function(opts){
     var bre          = opts.bre
@@ -7,16 +8,6 @@ module.exports = function(opts){
     this.init = async () => {
         
         var runJS = (input,cfg,results) => new Promise( async (resolve,reject) => {
-            
-            let handleError = (e) => {
-                var lineStr  = String(e.stack).match(/Rule:([0-9]+):/) ? String(e.stack).match(/Rule:([0-9]+):/)[0] : 0
-                var line     = parseInt( lineStr )
-                var errline  = code.split("\n")[line-11] || e.stack
-                var errmsg   = "⚠ "+ (errline ? errline.split("\n").slice(0,3).join("\n") : e)
-                inputs[x].output = inputs[x].output || {}
-                inputs[x].output.error = e.stack
-                return reject(errmsg)
-            }
 
             try{
                 var code = `new Promise( async (resolve,reject) => {
@@ -29,7 +20,7 @@ module.exports = function(opts){
                         resolve(res)
                     }catch(e){ reject(e) }
                 })`    
-            }catch(e){ return handleError(e) }
+            }catch(e){ return this.handleError(e,code||"",input,reject) }
             
             var jconsole = {}
             for( var i in console ) jconsole[i] = console[i]
@@ -38,13 +29,13 @@ module.exports = function(opts){
                 f(`error in rule: ${id}\n`+e)
             }.bind(console,console.error,input.rule)
 
-            var inputs = input[0] ? input : [input] // support multi-input
-            
-            var halt
-            for( var x =0; typeof inputs[x] == 'object' ; x++ ){
-                var scope = Object.assign(opts,{
-                    input: inputs[x],
-                    cfg,
+			let onError = (e,input,i,res) => this.handleError(e,code,input,reject)
+			
+			var halt;
+			await bre.Channel.runMultiInput( input, async (minput,k) => {
+			    var scope = Object.assign(opts,{
+                    input: minput,
+					cfg,
                     clone: (d) => Object.assign({},d),
                     results,
                     console:jconsole,
@@ -52,10 +43,10 @@ module.exports = function(opts){
                 })
                 try {
                     var res = await runcode(code,scope,{filename:'Rule'})
-                    if( typeof res == 'object ') for( var i in res ) inputs[x][i] = res[i] // update input
-                    if( res == undefined ) halt = true
-                } catch (e) { return handleError(e) }
-            }
+                	if( res == undefined ) halt = true
+					return res
+				} catch (e) { return handleError(e,code,input,reject) }	
+			}, onError )
             resolve( halt ? undefined : input ) // never reject since errors are handled above
         })               
         
@@ -98,6 +89,15 @@ module.exports = function(opts){
             ]            
         }
     }
+	
+	this.handleError = (e,code,input,reject) => {
+		var lineStr  = String(e.stack).match(/Rule:([0-9]+):/) ? String(e.stack).match(/Rule:([0-9]+):/)[0] : 0
+		var line     = parseInt( lineStr )
+		var errline  = code.split("\n")[line-11] || e.stack
+		var errmsg   = "⚠ "+ (errline ? errline.split("\n").slice(0,3).join("\n") : e)
+		_.set(input,'output.error', e.stack )
+		return reject(errmsg)
+	}
 
     opts.bre.addChannel(this)
   
