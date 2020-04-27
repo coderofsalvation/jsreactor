@@ -45,7 +45,7 @@ module.exports = function(opts){
                     var res = await runcode(code,scope,{filename:'Rule'})
                 	if( res == undefined ) halt = true
 					return res
-				} catch (e) { return handleError(e,code,input,reject) }	
+				} catch (e) { return this.handleError(e,code,input,reject) }	
 			}, onError )
             resolve( halt ? undefined : input ) // never reject since errors are handled above
         })               
