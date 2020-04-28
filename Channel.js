@@ -147,9 +147,7 @@ function Channel(bre){
 				for( var x in input ) facts[x] = input[x]
 				facts.output = output
 			}
-			bre.log("errors="+errors+' j='+j)
-			
-		    if( halt || errors == j ){
+			if( halt || errors == j ){
 				bre.log("errors="+errors+' j='+j+" halt="+(halt?"ja":"nee"))
 				break; // halt further execution if everything errors         
 			}

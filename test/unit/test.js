@@ -11,6 +11,7 @@ require('./helloworld')
 require('./multiaction')
 require('./concurrency')
 require('./multirule-with-return')
+require('./lodashfunctions')
 
 z.test('some grouped assertions', t => {
     t.ok(true, 'true is truthy')
