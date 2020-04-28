@@ -34,6 +34,7 @@ module.exports = function(opts){
 			var halt;
 			await bre.Channel.runMultiInput( input, async (minput,k) => {
 			    var scope = Object.assign(opts,{
+					_,
                     input: minput,
 					cfg,
                     clone: (d) => Object.assign({},d),
