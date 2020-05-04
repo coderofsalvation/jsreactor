@@ -148,7 +148,7 @@ function Channel(bre){
 				facts.output = output
 			}
 			if( halt || errors == j ){
-				bre.log("errors="+errors+' j='+j+" halt="+(halt?"ja":"nee"))
+				bre.log("errors="+errors+' action='+j+" halt="+(halt?"yes":"no"))
 				break; // halt further execution if everything errors         
 			}
 		}
