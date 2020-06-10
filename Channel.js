@@ -113,7 +113,6 @@ function Channel(bre){
 
     this.runActions = (rule,facts,results) => new Promise( async (resolve,reject) => {
         if( !rule ) return resolve()
-        console.dir(rule.config.action)
         for( var i in rule.config.action){
             var operator = rule.config.action[i]
             var t = new Date().getTime()

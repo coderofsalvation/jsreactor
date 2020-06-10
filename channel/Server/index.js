@@ -1,3 +1,5 @@
+var _ = require('./../../_')
+
 function matchPattern(req,cfg){
     return req.url.match( cfg.regex ? new RegExp(cfg.pattern) : cfg.pattern ) != null ? true : false
 }
@@ -48,10 +50,10 @@ module.exports = function(opts){
 // usage in express: 
 //    app.use( require('@coderofsalvation/jsreactor/channel/Server').middleware )
 
-module.exports.middleware = (req,res,next) => {
-    if( !process.bre || !process.bre.rules ) return next()
-    process.bre.express = true
-    var triggers = process.bre.rules.filter( (r) => {
+module.exports.middleware = (id) => (req,res,next) => {
+    if( ! _.get(process[id], 'bre.rules' ) ) return next()
+    process[id].bre.express = true
+    var triggers = process[id].bre.rules.filter( (r) => {
         if( !r.config || !r.config.trigger ) return false
         var matches = r.config.trigger.filter( (t) => {
             return  t.channel == 'Server' &&
@@ -61,7 +63,7 @@ module.exports.middleware = (req,res,next) => {
         return matches.length ? matches : false
     })
     if( triggers.length ){
-        process.bre.run({
+        process[id].bre.run({
             web_request_in:true,
             flop:1,
             "req": () => req,
