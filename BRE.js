@@ -95,7 +95,11 @@ function BRE(adapter,opts){
         facts.runid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 7) 
         await this.init()
         debug("run("+JSON.stringify(facts)+")")
-        var res = {runid: facts.runid, triggers: (new Date().getTime()-t)+"ms",actions:"0ms"}
+        var res = {runid: facts.runid, time:{ 
+				triggers: (new Date().getTime()-t)+"ms",actions:"0ms", 
+				actions: ""
+			}
+		}
         
         this.engine.run(facts)
         .then( async (results) => {
@@ -111,7 +115,7 @@ function BRE(adapter,opts){
             }
             res.output = facts.output || {}
             if( res.output.debug ) res.input = input
-            res.actions = (new Date().getTime()-t)+"ms"
+            res.time.actions = (new Date().getTime()-t)+"ms"
             return resolve(res)
         })
         .catch( (e) => {

@@ -50,7 +50,7 @@ module.exports = function(opts){
 // usage in express: 
 //    app.use( require('@coderofsalvation/jsreactor/channel/Server').middleware )
 
-module.exports.middleware = (id) => (req,res,next) => {
+module.exports.middleware = (id) => async (req,res,next) => {
     if( ! _.get(process[id], 'bre.rules' ) ) return next()
     process[id].bre.express = true
     var triggers = process[id].bre.rules.filter( (r) => {
@@ -63,12 +63,12 @@ module.exports.middleware = (id) => (req,res,next) => {
         return matches.length ? matches : false
     })
     if( triggers.length ){
-        process[id].bre.run({
+        var result = await process[id].bre.run({
             web_request_in:true,
-            flop:1,
             "req": () => req,
             "res": () => res,
             "next": next
         })
+		if( result.actions < 1 ) next() // nothing happened 
     }else next()
 }
