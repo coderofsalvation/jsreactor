@@ -89,7 +89,8 @@ z.test('run input', async (t) => {
         "fromLastName": "de Flopper"
     } 
     var result = await b.run(input)
-    t.ok( result.runid && result.triggers && result.actions && result.output,"result obj ok" )
+	console.dir(result)
+    t.ok( result.runid && result.time && result.actions && result.output,"result obj ok" )
     t.ok( result.input.i == 3 && result.input.password && result.input.username, "modified input was forwarded" )
 })
 

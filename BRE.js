@@ -7,12 +7,6 @@ var pMemoize = require('p-memoize')
 function BRE(adapter,opts){
     var Channel     = this.Channel = require('./Channel')(this)
     opts            = opts || {}
-    this.opts       = opts
-    this.log        = (s,prefix,opts) => console.log( (prefix ? prefix : "bre: ") + (typeof s == 'object' ? JSON.stringify(s,null,2) : `${s}`), opts )
-    this.schema     = {}
-    this.channels   = {}
-    this.log("initing")
-
     // rules engine
     this.rules    = [] // recent loaded rules
     this.engine   = new jre.Engine()
@@ -21,6 +15,14 @@ function BRE(adapter,opts){
     
     this.addChannel  = Channel.addChannel.bind(this) // alias
     this.addType     = Channel.addType 
+	
+	this.setOpts 	= (opts) => {
+		this.opts       = opts
+		this.log        = (s,prefix,opts) => console.log( (prefix ? prefix : "bre: ") + (typeof s == 'object' ? JSON.stringify(s,null,2) : `${s}`), opts )
+		this.log("initing")
+		this.schema     = {}
+		this.channels   = {}
+	}
 
     this.init = () => new Promise( async (resolve,reject) => {   
         this.schema = require('./schema.js')(opts)
@@ -139,6 +141,9 @@ function BRE(adapter,opts){
     
     // attach to process for convenience (Server plugin e.g.)
     if( typeof process != "undefined" ) process.bre = this
+	
+	this.setOpts(opts)
+
     return this
 }
 
