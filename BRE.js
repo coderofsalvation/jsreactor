@@ -12,7 +12,7 @@ function BRE(adapter,opts){
     this.engine   = new jre.Engine()
     this.toJSON   = ( ) => JSON.stringify( this.engine.rules.map( (r) => r.toJSON() ) )
     this.loadJSON = (j) => JSON.parse(j).map( (jstr) => this.engine.addRule(new Rule(jstr) ) )
-    
+   	this.log      = (a,b) => console.log(a, b)
     this.addChannel  = Channel.addChannel.bind(this) // alias
     this.addType     = Channel.addType 
 	
@@ -109,7 +109,7 @@ function BRE(adapter,opts){
             if( results.events.length == 0 ) return resolve(res)
             for( var i in results.events ){
                 var rule  = results.events[i].params
-                if( this.initLogger ) this.log = this.initLogger(log,rule) || this.log
+                if( this.initLogger ) this.log = this.initLogger(this.log,rule) || this.log
                 var input = Object.assign({},facts)  // copied version of input: dont share inputs across rules
                 input.output = facts.output          // share outputs across rules
                 await Channel.runActions(results.events[i].params,input,results)
