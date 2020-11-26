@@ -109,6 +109,7 @@ function BRE(adapter,opts){
             if( results.events.length == 0 ) return resolve(res)
             for( var i in results.events ){
                 var rule  = results.events[i].params
+				if( this.onRule     ) this.onRule(rule)
                 if( this.initLogger ) this.log = this.initLogger(this.log,rule) || this.log
                 var input = Object.assign({},facts)  // copied version of input: dont share inputs across rules
                 input.output = facts.output          // share outputs across rules

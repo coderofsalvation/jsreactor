@@ -25,6 +25,7 @@ var b = BRE(/* myBackendAdapter */ )
 var inputChannel = require('@coderofsalvation/jsreactor/channel/Input)
 new inputChannel(b)
 b.init() // first init
+b.onRule = (rule) => console.dir(rule)
     
 b.run({foo:"bar"}) // data will be passed thru the business rules engine
                    // and conditionally triggers actions
