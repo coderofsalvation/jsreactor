@@ -67,7 +67,7 @@ module.exports.middleware = (id) => async (req,res,next) => {
             web_request_in:true,
             "req": () => req,
             "res": () => res,
-            "next": next
+            "next": () => next()
         })
 		if( result.actions < 1 ) next() // nothing happened 
     }else next()
